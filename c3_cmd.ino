@@ -87,7 +87,7 @@ void onReceive(String &cmd) {
   if (cmd.startsWith(CMD_SINGLE, 0)) {
     Serial1.printf(CMD_SINGLE "\n");
 
-    if (getDeviceID() >= 0 && getRunMode() == MODE_INIT || getRunMode() == MODE_SINGLE_RUN) {
+    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_SINGLE_RUN)) {
       setRunMode(MODE_SINGLE_WAIT);
 
       sendOK(CMD_SINGLE);
@@ -101,12 +101,26 @@ void onReceive(String &cmd) {
   if (cmd.startsWith(CMD_MULTI, 0)) {
     Serial1.printf(CMD_MULTI "\n");
 
-    if (getDeviceID() >= 0 && getRunMode() == MODE_INIT || getRunMode() == MODE_MULTI_RUN) {
+    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_MULTI_RUN)) {
       setRunMode(MODE_MULTI_WAIT);
 
       sendOK(CMD_MULTI);
     } else {
       sendNG(CMD_MULTI);
+    }
+
+    unknown = 0;
+  }
+
+  if (cmd.startsWith(CMD_CANCEL, 0)) {
+    Serial1.printf(CMD_CANCEL "\n");
+
+    if (getDeviceID() >= 0 && getRunMode() == MODE_SINGLE_RUN) {
+      setRunMode(MODE_INIT);
+
+      sendOK(CMD_CANCEL);
+    } else {
+      sendNG(CMD_CANCEL);
     }
 
     unknown = 0;
