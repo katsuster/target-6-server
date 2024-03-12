@@ -89,4 +89,5 @@ void loopBLE() {
 void txBLE(const char *buf) {
   pTxCharacteristic->setValue((uint8_t *)buf, strlen(buf));
   pTxCharacteristic->notify();
+  delay(10);
 }
