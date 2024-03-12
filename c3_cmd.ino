@@ -20,11 +20,8 @@ void sendNG(const char *cmd) {
   sendMessage(cmd, "NG");
 }
 
-void onReceive(String &cmd) {
+int cmdCommon(String &cmd) {
   int id, n, r;
-  int unknown = 1;
-
-  Serial1.printf("onReceive '%s'\n", cmd.c_str());
 
   if (cmd.startsWith(CMD_HELP, 0)) {
     Serial1.printf(CMD_HELP "\n");
@@ -39,7 +36,7 @@ void onReceive(String &cmd) {
     txBLE(CMD_THRESHOLD   " sensor num : Change threshold of sound sensor (100-4095).\n");
     txBLE(CMD_HELP        "            : Show this message.\n");
 
-    unknown = 0;
+    return 0;
   }
 
   if (cmd.startsWith(CMD_SHOW, 0)) {
@@ -55,16 +52,7 @@ void onReceive(String &cmd) {
       txBLE(buf);
     }
 
-    unknown = 0;
-  }
-
-  if (cmd.startsWith(CMD_BLINK, 0)) {
-    Serial1.printf(CMD_BLINK "\n");
-
-    blinkLED();
-    sendOK(CMD_BLINK);
-
-    unknown = 0;
+    return 0;
   }
 
   if (cmd.startsWith(CMD_INIT, 0)) {
@@ -81,35 +69,16 @@ void onReceive(String &cmd) {
       sendNG(CMD_INIT);
     }
 
-    unknown = 0;
+    return 0;
   }
 
-  if (cmd.startsWith(CMD_SINGLE, 0)) {
-    Serial1.printf(CMD_SINGLE "\n");
+  if (cmd.startsWith(CMD_BLINK, 0)) {
+    Serial1.printf(CMD_BLINK "\n");
 
-    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_SINGLE_RUN)) {
-      setRunMode(MODE_SINGLE_WAIT);
+    blinkLED();
+    sendOK(CMD_BLINK);
 
-      sendOK(CMD_SINGLE);
-    } else {
-      sendNG(CMD_SINGLE);
-    }
-
-    unknown = 0;
-  }
-
-  if (cmd.startsWith(CMD_MULTI, 0)) {
-    Serial1.printf(CMD_MULTI "\n");
-
-    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_MULTI_RUN)) {
-      setRunMode(MODE_MULTI_WAIT);
-
-      sendOK(CMD_MULTI);
-    } else {
-      sendNG(CMD_MULTI);
-    }
-
-    unknown = 0;
+    return 0;
   }
 
   if (cmd.startsWith(CMD_INTERVAL_AVE, 0)) {
@@ -126,7 +95,7 @@ void onReceive(String &cmd) {
       sendNG(CMD_INTERVAL_AVE);
     }
 
-    unknown = 0;
+    return 0;
   }
 
   if (cmd.startsWith(CMD_INTERVAL_HIT, 0)) {
@@ -143,7 +112,7 @@ void onReceive(String &cmd) {
       sendNG(CMD_INTERVAL_HIT);
     }
 
-    unknown = 0;
+    return 0;
   }
 
   if (cmd.startsWith(CMD_THRESHOLD, 0)) {
@@ -160,12 +129,73 @@ void onReceive(String &cmd) {
       sendNG(CMD_THRESHOLD);
     }
 
-    unknown = 0;
+    return 0;
   }
 
-  if (unknown) {
-    Serial1.printf("unknown\n");
+  //unknown command
+  return 1;
+}
 
-    sendNG("unknown");
+int cmdControlNode(String &cmd) {
+  //unknown command
+  return 1;
+}
+
+int cmdSensorNode(String &cmd) {
+  if (cmd.startsWith(CMD_SINGLE, 0)) {
+    Serial1.printf(CMD_SINGLE "\n");
+
+    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_SINGLE_RUN)) {
+      setRunMode(MODE_SINGLE_WAIT);
+
+      sendOK(CMD_SINGLE);
+    } else {
+      sendNG(CMD_SINGLE);
+    }
+
+    return 0;
   }
+
+  if (cmd.startsWith(CMD_MULTI, 0)) {
+    Serial1.printf(CMD_MULTI "\n");
+
+    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_MULTI_RUN)) {
+      setRunMode(MODE_MULTI_WAIT);
+
+      sendOK(CMD_MULTI);
+    } else {
+      sendNG(CMD_MULTI);
+    }
+
+    return 0;
+  }
+
+  //unknown command
+  return 1;
+}
+
+void onReceive(String &cmd) {
+  int r;
+
+  Serial1.printf("onReceive '%s'\n", cmd.c_str());
+
+  r = cmdCommon(cmd);
+  if (r == 0) {
+    return;
+  }
+
+  if (getDeviceID() == 0) {
+    r = cmdControlNode(cmd);
+  } else if (getDeviceID() > 0) {
+    r = cmdSensorNode(cmd);
+  } else {
+    //not set
+    r = 1;
+  }
+  if (r == 0) {
+    return;
+  }
+
+  Serial1.printf("unknown\n");
+  sendNG("unknown");
 }
