@@ -112,20 +112,6 @@ void onReceive(String &cmd) {
     unknown = 0;
   }
 
-  if (cmd.startsWith(CMD_CANCEL, 0)) {
-    Serial1.printf(CMD_CANCEL "\n");
-
-    if (getDeviceID() >= 0 && getRunMode() == MODE_SINGLE_RUN) {
-      setRunMode(MODE_INIT);
-
-      sendOK(CMD_CANCEL);
-    } else {
-      sendNG(CMD_CANCEL);
-    }
-
-    unknown = 0;
-  }
-
   if (cmd.startsWith(CMD_INTERVAL_AVE, 0)) {
     Serial1.printf(CMD_INTERVAL_AVE "\n");
 
