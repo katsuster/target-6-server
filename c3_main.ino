@@ -330,7 +330,9 @@ void loopSingleRun(void) {
     } else {
       digitalWrite(sensors[i].pin_out, LOW);
     }
+  }
 
+  for (int i = 0; i < N_SENSORS; i++) {
     int hit;
 
     if (sensors[i].pin_type_in == PIN_TYPE_ANALOG) {
@@ -346,6 +348,7 @@ void loopSingleRun(void) {
       sensors[i].mil_hit = getPastTime();
 
       nextTarget();
+      break;
     }
   }
 }
