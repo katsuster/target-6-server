@@ -13,6 +13,7 @@
 #define MODE_SINGLE_WAIT2   11
 #define MODE_SINGLE_RUN     2
 #define MODE_MULTI_WAIT     3
+#define MODE_MULTI_WAIT2    31
 #define MODE_MULTI_RUN      4
 
 #define LED_PIN          2
@@ -63,5 +64,8 @@ void setInitTime(unsigned long m);
 int turnonColLED(int col);
 int turnoffColLED(int col);
 int blinkLED(void);
+
+void loopController();
+void loopSensor();
 
 #endif /* C3_MAIN_H__ */

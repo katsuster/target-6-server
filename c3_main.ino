@@ -101,9 +101,11 @@ void initGPIOs(void) {
     pinMode(gpios[i], INPUT);
   }
   for (int i = 0; i < N_SENSORS; i++) {
-    pinMode(sensors[i].pin_in, INPUT);
-    pinMode(sensors[i].pin_out, OUTPUT);
-    digitalWrite(sensors[i].pin_out, LOW);
+    struct sensor *s = getSensor(i);
+
+    pinMode(s->pin_in, INPUT);
+    pinMode(s->pin_out, OUTPUT);
+    digitalWrite(s->pin_out, LOW);
   }
 }
 
@@ -148,13 +150,15 @@ void setRunMode(int m) {
   case MODE_SINGLE_WAIT2:
   case MODE_SINGLE_RUN:
   case MODE_MULTI_WAIT:
+  case MODE_MULTI_WAIT2:
   case MODE_MULTI_RUN:
-    run_mode = m;
     break;
   default:
     Serial1.printf("%d is unknown mode.\n", m);
     break;
   }
+
+  run_mode = m;
 }
 
 void setupTargets(void) {
@@ -240,6 +244,7 @@ int blinkLED(void) {
   }
 
   blink = !blink;
+  delay(10);
 
   return 0;
 }
@@ -280,107 +285,11 @@ int detectHitDigital(struct sensor *s) {
   return v == HIGH;
 }
 
-void loopInit(void) {
-  for (int i = 0; i < N_SENSORS; i++) {
-    digitalWrite(sensors[i].pin_out, LOW);
-  }
-}
-
-void loopSingleWait(void) {
-  for (int i = 0; i < N_SENSORS; i++) {
-    digitalWrite(sensors[i].pin_out, HIGH);
-  }
-
-  setInitTime(millis());
-  setRunMode(MODE_SINGLE_WAIT2);
-}
-
-void loopSingleWait2(void) {
-  if (getPastTime() > 3000) {
-    for (int i = 0; i < N_SENSORS; i++) {
-      digitalWrite(sensors[i].pin_out, LOW);
-    }
-
-    randomSeed(millis());
-    setupTargets();
-    initSensors();
-    setRunMode(MODE_SINGLE_RUN);
-  }
-}
-
-void loopSingleRun(void) {
-  if (isFinishedTarget()) {
-    for (int i = 0; i < N_SENSORS; i++) {
-      struct sensor *s = &sensors[i];
-      char buf[128];
-
-      sprintf(buf, "d:%d s:%d %d:%02d.%03d hit:%d\n",
-          getDeviceID(), s->id,
-          s->mil_hit / 1000 / 60, (s->mil_hit / 1000) % 60, s->mil_hit % 1000,
-          s->cnt_hit);
-      txBLE(buf);
-    }
-
-    setRunMode(MODE_INIT);
-  }
-
-  for (int i = 0; i < N_SENSORS; i++) {
-    if (i == getCurrentTarget()) {
-      digitalWrite(sensors[i].pin_out, HIGH);
-    } else {
-      digitalWrite(sensors[i].pin_out, LOW);
-    }
-  }
-
-  for (int i = 0; i < N_SENSORS; i++) {
-    int hit;
-
-    if (sensors[i].pin_type_in == PIN_TYPE_ANALOG) {
-      hit = detectHitAnalog(&sensors[i]);
-    } else {
-      hit = detectHitDigital(&sensors[i]);
-    }
-    if (!hit) {
-      continue;
-    }
-
-    if (i == getCurrentTarget()) {
-      sensors[i].mil_hit = getPastTime();
-
-      nextTarget();
-      break;
-    }
-  }
-}
-
-void loopMultiWait(void) {
-  //do nothing
-}
-
-void loopMultiRun(void) {
-  //do nothing
-}
-
 void loop() {
-  switch (getRunMode()) {
-  case MODE_INIT:
-    loopInit();
-    break;
-  case MODE_SINGLE_WAIT:
-    loopSingleWait();
-    break;
-  case MODE_SINGLE_WAIT2:
-    loopSingleWait2();
-    break;
-  case MODE_SINGLE_RUN:
-    loopSingleRun();
-    break;
-  case MODE_MULTI_WAIT:
-    loopMultiWait();
-    break;
-  case MODE_MULTI_RUN:
-    loopMultiRun();
-    break;
+  if (getDeviceID() == 0) {
+    loopController();
+  } else if (getDeviceID() > 0) {
+    loopSensor();
   }
 
   loopBLE();

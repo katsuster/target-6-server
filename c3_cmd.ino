@@ -137,6 +137,20 @@ int cmdCommon(String &cmd) {
 }
 
 int cmdControlNode(String &cmd) {
+  if (cmd.startsWith(CMD_MULTI, 0)) {
+    Serial1.printf(CMD_MULTI "\n");
+
+    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_MULTI_RUN)) {
+      setRunMode(MODE_MULTI_WAIT);
+
+      sendOK(CMD_MULTI);
+    } else {
+      sendNG(CMD_MULTI);
+    }
+
+    return 0;
+  }
+
   //unknown command
   return 1;
 }
@@ -151,20 +165,6 @@ int cmdSensorNode(String &cmd) {
       sendOK(CMD_SINGLE);
     } else {
       sendNG(CMD_SINGLE);
-    }
-
-    return 0;
-  }
-
-  if (cmd.startsWith(CMD_MULTI, 0)) {
-    Serial1.printf(CMD_MULTI "\n");
-
-    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_MULTI_RUN)) {
-      setRunMode(MODE_MULTI_WAIT);
-
-      sendOK(CMD_MULTI);
-    } else {
-      sendNG(CMD_MULTI);
     }
 
     return 0;
