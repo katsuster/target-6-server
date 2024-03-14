@@ -39,6 +39,9 @@
 #define INTERVAL_AVE_DEFAULT     5
 #define INTERVAL_HIT_DEFAULT     100
 #define THRESHOLD_DEFAULT        800
+#define BEEP_TYPE_HIGH           0
+#define BEEP_TYPE_SQUARE         1
+#define BEEP_HZ_DEFAULT          440
 
 #define COL_R    1
 #define COL_G    2

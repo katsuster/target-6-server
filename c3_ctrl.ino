@@ -3,8 +3,8 @@
 #include "c3_ble.h"
 #include "c3_main.h"
 
-static int beep_type = 0;
-static int beep_hz = 500;
+static int beep_type = BEEP_TYPE_HIGH;
+static int beep_hz = BEEP_HZ_DEFAULT;
 
 int getBeepType(void)
 {
@@ -76,7 +76,7 @@ void loopMultiBeepWait(void) {
     setRunMode(MODE_INIT);
   }
 
-  if (getBeepType() == 0) {
+  if (getBeepType() == BEEP_TYPE_SQUARE) {
     if (micros() - before > (1000000 / getBeepHz() / 2)) {
       digitalWrite(4, beepVal);
       if (beepVal == LOW) {
