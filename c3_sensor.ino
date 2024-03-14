@@ -35,7 +35,6 @@ void loopSingleWait2(void) {
     fallingEdge = 1;
   }
   lastVal = curVal;
-    digitalWrite(getSensor(1)->pin_out, lastVal);
 
   if (fallingEdge) {
     for (int i = 0; i < N_SENSORS; i++) {
