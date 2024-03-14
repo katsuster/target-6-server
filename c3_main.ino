@@ -9,78 +9,60 @@ static struct sensor sensors[N_SENSORS] = {
     .id = 0,
     .pin_type_in = PIN_TYPE_DIGITAL,
     .pin_type_out = PIN_TYPE_DIGITAL,
-    .pin_in = 0,
-    .pin_out = 8,
+    .pin_in = GPIO_SENSOR0,
+    .pin_out = GPIO_TARGET_LED0,
   },
 
   [1] = {
     .id = 1,
     .pin_type_in = PIN_TYPE_DIGITAL,
     .pin_type_out = PIN_TYPE_DIGITAL,
-    .pin_in = 1,
-    .pin_out = 9,
+    .pin_in = GPIO_SENSOR1,
+    .pin_out = GPIO_TARGET_LED1,
   },
 
   [2] = {
     .id = 2,
     .pin_type_in = PIN_TYPE_DIGITAL,
     .pin_type_out = PIN_TYPE_DIGITAL,
-    .pin_in = 4,
-    .pin_out = 10,
+    .pin_in = GPIO_SENSOR2,
+    .pin_out = GPIO_TARGET_LED2,
   },
 
   [3] = {
     .id = 3,
     .pin_type_in = PIN_TYPE_DIGITAL,
     .pin_type_out = PIN_TYPE_DIGITAL,
-    .pin_in = 5,
-    .pin_out = 18,
+    .pin_in = GPIO_SENSOR3,
+    .pin_out = GPIO_TARGET_LED3,
   },
 
   [4] = {
     .id = 4,
     .pin_type_in = PIN_TYPE_DIGITAL,
     .pin_type_out = PIN_TYPE_DIGITAL,
-    .pin_in = 6,
-    .pin_out = 19,
+    .pin_in = GPIO_SENSOR4,
+    .pin_out = GPIO_TARGET_LED4,
   },
 
   [5] = {
     .id = 5,
     .pin_type_in = PIN_TYPE_DIGITAL,
     .pin_type_out = PIN_TYPE_DIGITAL,
-    .pin_in = 7,
-    .pin_out = 21,
+    .pin_in = GPIO_SENSOR5,
+    .pin_out = GPIO_TARGET_LED5,
   },
 };
 
-/*
+/* Analog type sample
 static struct sensor sensors[N_SENSORS] = {
   [0] = {
     .id = 0,
     .pin_type_in = PIN_TYPE_ANALOG,
     .pin_type_out = PIN_TYPE_DIGITAL,
-    .pin_in = ADC_PIN0,
-    .pin_out = GPIO_HIT_PIN0,
+    .pin_in = ADC_SENSOR0,
+    .pin_out = GPIO_TARGET_LED0,
     .col = COL_R,
-  },
-
-  [1] = {
-    .id = 1,
-    .pin_type_in = PIN_TYPE_ANALOG,
-    .pin_type_out = PIN_TYPE_DIGITAL,
-    .pin_in = ADC_PIN1,
-    .pin_out = GPIO_HIT_PIN1,
-    .col = COL_G,
-  },
-
-  [2] = {
-    .id = 2,
-    .pin_type_in = PIN_TYPE_ANALOG,
-    .pin_type_out = PIN_TYPE_DIGITAL,
-    .pin_in = ADC_PIN2,
-    .pin_out = GPIO_HIT_PIN2,
-    .col = COL_B,
   },
 };
 */
@@ -317,10 +299,3 @@ void setup() {
 
   initBLE();
 }
-
-  /*if (aaa) {
-    digitalWrite(GPIO_HIT_PIN, HIGH);
-  } else {
-    digitalWrite(GPIO_HIT_PIN, LOW);
-  }
-  aaa = !aaa;*/

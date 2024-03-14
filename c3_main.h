@@ -18,13 +18,23 @@
 #define MODE_BEEP           5
 #define MODE_BEEP_WAIT      51
 
-#define LED_PIN          2
-#define ADC_PIN0         0
-#define ADC_PIN1         1
-#define ADC_PIN2         4
-#define GPIO_HIT_PIN0    6
-#define GPIO_HIT_PIN1    7
-#define GPIO_HIT_PIN2    8
+#define LED_PIN             2
+#define ADC_SENSOR0         0
+#define ADC_SENSOR1         1
+#define ADC_SENSOR2         4
+
+#define GPIO_SENSOR0        0
+#define GPIO_SENSOR1        1
+#define GPIO_SENSOR2        4
+#define GPIO_SENSOR3        5
+#define GPIO_SENSOR4        6
+#define GPIO_SENSOR5        7
+#define GPIO_TARGET_LED0    8
+#define GPIO_TARGET_LED1    9
+#define GPIO_TARGET_LED2    10
+#define GPIO_TARGET_LED3    18
+#define GPIO_TARGET_LED4    19
+#define GPIO_TARGET_LED5    21
 
 #define INTERVAL_AVE_DEFAULT     5
 #define INTERVAL_HIT_DEFAULT     100
