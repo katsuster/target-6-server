@@ -15,6 +15,8 @@
 #define MODE_MULTI_WAIT     3
 #define MODE_MULTI_WAIT2    31
 #define MODE_MULTI_RUN      4
+#define MODE_BEEP           5
+#define MODE_BEEP_WAIT      51
 
 #define LED_PIN          2
 #define ADC_PIN0         0
@@ -67,5 +69,10 @@ int blinkLED(void);
 
 void loopController();
 void loopSensor();
+
+int getBeepType(void);
+void setBeepType(int t);
+int getBeepHz(void);
+void setBeepHz(int hz);
 
 #endif /* C3_MAIN_H__ */

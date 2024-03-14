@@ -152,6 +152,8 @@ void setRunMode(int m) {
   case MODE_MULTI_WAIT:
   case MODE_MULTI_WAIT2:
   case MODE_MULTI_RUN:
+  case MODE_BEEP:
+  case MODE_BEEP_WAIT:
     break;
   default:
     Serial1.printf("%d is unknown mode.\n", m);

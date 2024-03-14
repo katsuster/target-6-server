@@ -7,9 +7,11 @@
 #define CMD_INIT            "init"
 #define CMD_SINGLE          "single"
 #define CMD_MULTI           "multi"
+#define CMD_BEEP            "beep"
 #define CMD_INTERVAL_AVE    "iave"
 #define CMD_INTERVAL_HIT    "ihit"
 #define CMD_THRESHOLD       "thre"
+#define CMD_TYPE_BEEP       "tbeep"
 
 void onReceive(String &cmd);
 

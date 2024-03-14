@@ -31,9 +31,11 @@ int cmdCommon(String &cmd) {
     txBLE(CMD_INIT        " devid      : Set ID and clear timer and counts.\n");
     txBLE(CMD_SINGLE      "            : Wait for start (single mode).\n");
     txBLE(CMD_MULTI       "            : Wait for start (multi mode).\n");
+    txBLE(CMD_BEEP        "            : Beep (multi mode).\n");
     txBLE(CMD_INTERVAL_AVE" sensor num : Change interval of hit detection [ms] (1-100).\n");
     txBLE(CMD_INTERVAL_HIT" sensor num : Change interval of hit to hit [ms] (10-10000).\n");
     txBLE(CMD_THRESHOLD   " sensor num : Change threshold of sound sensor (100-4095).\n");
+    txBLE(CMD_TYPE_BEEP   " type hz    : Change type and Hz of beep (type:0-1, hz: 100-4000).\n");
     txBLE(CMD_HELP        "            : Show this message.\n");
 
     return 0;
@@ -132,6 +134,24 @@ int cmdCommon(String &cmd) {
     return 0;
   }
 
+  if (cmd.startsWith(CMD_TYPE_BEEP, 0)) {
+    int tb = 0, hz = 500;
+
+    Serial1.printf(CMD_TYPE_BEEP "\n");
+
+    r = sscanf(cmd.c_str(), CMD_TYPE_BEEP " %d %d", &tb, &hz);
+    if (r == 2 && 0 <= tb && tb <= 1 && 100 <= hz && hz <= 4000) {
+      setBeepType(tb);
+      setBeepHz(hz);
+
+      sendOK(CMD_TYPE_BEEP);
+    } else {
+      sendNG(CMD_TYPE_BEEP);
+    }
+
+    return 0;
+  }
+
   //unknown command
   return 1;
 }
@@ -140,12 +160,26 @@ int cmdControlNode(String &cmd) {
   if (cmd.startsWith(CMD_MULTI, 0)) {
     Serial1.printf(CMD_MULTI "\n");
 
-    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_MULTI_RUN)) {
+    if (getRunMode() == MODE_INIT || getRunMode() == MODE_MULTI_RUN) {
       setRunMode(MODE_MULTI_WAIT);
 
       sendOK(CMD_MULTI);
     } else {
       sendNG(CMD_MULTI);
+    }
+
+    return 0;
+  }
+
+  if (cmd.startsWith(CMD_BEEP, 0)) {
+    Serial1.printf(CMD_BEEP "\n");
+
+    if (getDeviceID() >= 0) {
+      setRunMode(MODE_BEEP);
+
+      sendOK(CMD_BEEP);
+    } else {
+      sendNG(CMD_BEEP);
     }
 
     return 0;
@@ -159,7 +193,7 @@ int cmdSensorNode(String &cmd) {
   if (cmd.startsWith(CMD_SINGLE, 0)) {
     Serial1.printf(CMD_SINGLE "\n");
 
-    if (getDeviceID() >= 0 && (getRunMode() == MODE_INIT || getRunMode() == MODE_SINGLE_RUN)) {
+    if (getRunMode() == MODE_INIT || getRunMode() == MODE_SINGLE_RUN) {
       setRunMode(MODE_SINGLE_WAIT);
 
       sendOK(CMD_SINGLE);
