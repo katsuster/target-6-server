@@ -135,12 +135,12 @@ int cmdCommon(String &cmd) {
   }
 
   if (cmd.startsWith(CMD_TYPE_BEEP, 0)) {
-    int tb = 0, hz = 500;
+    int tb = BEEP_TYPE_HIGH, hz = BEEP_HZ_DEFAULT;
 
     Serial1.printf(CMD_TYPE_BEEP "\n");
 
     r = sscanf(cmd.c_str(), CMD_TYPE_BEEP " %d %d", &tb, &hz);
-    if (r == 2 && 0 <= tb && tb <= 1 && 100 <= hz && hz <= 4000) {
+    if (r == 2 && 0 <= tb && tb <= 1 && BEEP_HZ_MIN <= hz && hz <= BEEP_HZ_MAX) {
       setBeepType(tb);
       setBeepHz(hz);
 

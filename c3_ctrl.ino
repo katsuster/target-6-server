@@ -34,33 +34,36 @@ void loopCtrlInit(void) {
     pinMode(gpios[i], INPUT);
   }
 
-  pinMode(0, INPUT);
-  pinMode(1, INPUT);
+  pinMode(GPIO_START0, INPUT);
+  pinMode(GPIO_START1, INPUT);
+  pinMode(GPIO_BEEP, INPUT);
 }
 
 void loopMultiWait(void) {
-  pinMode(0, OUTPUT);
-  pinMode(1, OUTPUT);
-  digitalWrite(0, HIGH);
-  digitalWrite(1, HIGH);
+  pinMode(GPIO_START0, OUTPUT);
+  pinMode(GPIO_START1, OUTPUT);
+  digitalWrite(GPIO_START0, HIGH);
+  digitalWrite(GPIO_START1, HIGH);
 
   setInitTime(millis());
   setRunMode(MODE_MULTI_WAIT2);
 }
 
 void loopMultiWait2(void) {
-  if (getPastTime() > 3000) {
+  if (getPastTime() > LED_READY_LEN_MS) {
     digitalWrite(0, LOW);
     digitalWrite(1, LOW);
+
+    //Wait enough time to trigger sensor nodes
     delay(10);
 
-    setRunMode(MODE_INIT);
+    setRunMode(MODE_BEEP);
   }
 }
 
 void loopMultiBeep(void) {
-  pinMode(4, OUTPUT);
-  digitalWrite(4, HIGH);
+  pinMode(GPIO_BEEP, OUTPUT);
+  digitalWrite(GPIO_BEEP, HIGH);
   setInitTime(millis());
 
   setRunMode(MODE_BEEP_WAIT);
@@ -70,15 +73,15 @@ void loopMultiBeepWait(void) {
   static int beepVal = LOW;
   static unsigned long before = 0;
 
-  if (getPastTime() > 1000) {
-    digitalWrite(4, LOW);
-    pinMode(4, INPUT);
+  if (getPastTime() > BEEP_LEN_MS) {
+    digitalWrite(GPIO_BEEP, LOW);
+    pinMode(GPIO_BEEP, INPUT);
     setRunMode(MODE_INIT);
   }
 
   if (getBeepType() == BEEP_TYPE_SQUARE) {
     if (micros() - before > (1000000 / getBeepHz() / 2)) {
-      digitalWrite(4, beepVal);
+      digitalWrite(GPIO_BEEP, beepVal);
       if (beepVal == LOW) {
         beepVal = HIGH;
       } else {

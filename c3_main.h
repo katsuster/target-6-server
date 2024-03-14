@@ -18,6 +18,13 @@
 #define MODE_BEEP           5
 #define MODE_BEEP_WAIT      51
 
+
+//GPIO: Controller
+#define GPIO_START0         0
+#define GPIO_START1         1
+#define GPIO_BEEP           4
+
+//GPIO: Sensor
 #define LED_PIN             2
 #define ADC_SENSOR0         0
 #define ADC_SENSOR1         1
@@ -42,6 +49,11 @@
 #define BEEP_TYPE_HIGH           0
 #define BEEP_TYPE_SQUARE         1
 #define BEEP_HZ_DEFAULT          440
+#define BEEP_HZ_MIN              100
+#define BEEP_HZ_MAX              4000
+
+#define LED_READY_LEN_MS         3000
+#define BEEP_LEN_MS              600
 
 #define COL_R    1
 #define COL_G    2
