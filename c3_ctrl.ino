@@ -57,6 +57,8 @@ void loopMultiWait2(void) {
     //Wait enough time to trigger sensor nodes
     delay(10);
 
+    pinMode(GPIO_START0, INPUT);
+    pinMode(GPIO_START1, INPUT);
     setRunMode(MODE_BEEP);
   }
 }
