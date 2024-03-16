@@ -37,6 +37,11 @@ void loopCtrlInit(void) {
   pinMode(GPIO_START0, INPUT);
   pinMode(GPIO_START1, INPUT);
   pinMode(GPIO_BEEP, INPUT);
+
+  setRunMode(MODE_READY);
+}
+
+void loopCtrlReady(void) {
 }
 
 void loopMultiWait(void) {
@@ -99,6 +104,9 @@ void loopController() {
   switch (getRunMode()) {
   case MODE_INIT:
     loopCtrlInit();
+    break;
+  case MODE_READY:
+    loopCtrlReady();
     break;
   case MODE_MULTI_WAIT:
     loopMultiWait();

@@ -14,6 +14,11 @@ void loopSensorInit(void) {
     pinMode(s->pin_out, OUTPUT);
     digitalWrite(s->pin_out, LOW);
   }
+
+  setRunMode(MODE_READY);
+}
+
+void loopSensorReady(void) {
 }
 
 void loopSingleWait(void) {
@@ -102,6 +107,9 @@ void loopSensor() {
   switch (getRunMode()) {
   case MODE_INIT:
     loopSensorInit();
+    break;
+  case MODE_READY:
+    loopSensorReady();
     break;
   case MODE_SINGLE_WAIT:
     loopSingleWait();

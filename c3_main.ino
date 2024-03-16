@@ -128,6 +128,7 @@ int getRunMode(void) {
 void setRunMode(int m) {
   switch (m) {
   case MODE_INIT:
+  case MODE_READY:
   case MODE_SINGLE_WAIT:
   case MODE_SINGLE_WAIT2:
   case MODE_SINGLE_RUN:

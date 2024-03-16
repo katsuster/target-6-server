@@ -9,14 +9,15 @@
 #define PIN_TYPE_DIGITAL    2
 
 #define MODE_INIT           0
-#define MODE_SINGLE_WAIT    1
-#define MODE_SINGLE_WAIT2   11
-#define MODE_SINGLE_RUN     2
-#define MODE_MULTI_WAIT     3
-#define MODE_MULTI_WAIT2    31
-#define MODE_MULTI_RUN      4
-#define MODE_BEEP           5
-#define MODE_BEEP_WAIT      51
+#define MODE_READY          10
+#define MODE_SINGLE_WAIT    20
+#define MODE_SINGLE_WAIT2   21
+#define MODE_SINGLE_RUN     30
+#define MODE_MULTI_WAIT     40
+#define MODE_MULTI_WAIT2    51
+#define MODE_MULTI_RUN      60
+#define MODE_BEEP           70
+#define MODE_BEEP_WAIT      71
 
 
 //GPIO: Controller

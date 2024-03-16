@@ -162,7 +162,7 @@ int cmdControlNode(String &cmd) {
   if (cmd.startsWith(CMD_MULTI, 0)) {
     Serial1.printf(CMD_MULTI "\n");
 
-    if (getRunMode() == MODE_INIT || getRunMode() == MODE_MULTI_RUN) {
+    if (getRunMode() == MODE_READY || getRunMode() == MODE_MULTI_RUN) {
       setRunMode(MODE_MULTI_WAIT);
 
       sendOK(CMD_MULTI);
@@ -195,7 +195,7 @@ int cmdSensorNode(String &cmd) {
   if (cmd.startsWith(CMD_SINGLE, 0)) {
     Serial1.printf(CMD_SINGLE "\n");
 
-    if (getRunMode() == MODE_INIT || getRunMode() == MODE_SINGLE_RUN) {
+    if (getRunMode() == MODE_READY || getRunMode() == MODE_SINGLE_RUN) {
       setRunMode(MODE_SINGLE_WAIT);
 
       sendOK(CMD_SINGLE);
