@@ -23,7 +23,7 @@
 //GPIO: Controller
 #define GPIO_START0         0
 #define GPIO_START1         1
-#define GPIO_BEEP           4
+#define GPIO_BEEP           5
 
 //GPIO: Sensor
 #define LED_PIN             2
