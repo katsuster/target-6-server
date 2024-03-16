@@ -1,7 +1,7 @@
 #ifndef C3_CMD_H__
 #define C3_CMD_H__
 
-#define VERSION             "0.1.2"
+#define VERSION             "0.1.3"
 
 #define CMD_HELP            "help"
 #define CMD_SHOW            "show"
