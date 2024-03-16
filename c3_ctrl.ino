@@ -36,12 +36,34 @@ void loopCtrlInit(void) {
 
   pinMode(GPIO_START0, INPUT);
   pinMode(GPIO_START1, INPUT);
-  pinMode(GPIO_BEEP, INPUT);
+  pinMode(GPIO_BUTTON, INPUT);
+  pinMode(GPIO_BUZZER, INPUT);
 
   setRunMode(MODE_READY);
 }
 
 void loopCtrlReady(void) {
+  static int before = HIGH;
+  static unsigned long ignoreEnd = 0;
+  int b = digitalRead(GPIO_BUTTON);
+  char buf[64];
+
+  if (millis() < ignoreEnd) {
+    //ignore
+    return;
+  }
+
+  if (b == LOW && before == HIGH) {
+    sprintf(buf, "d:%d button press\n", getDeviceID());
+    txBLE(buf);
+    before = b;
+    ignoreEnd = millis();
+  } else if (b == HIGH && before == LOW) {
+    sprintf(buf, "d:%d button release\n", getDeviceID());
+    txBLE(buf);
+    before = b;
+    ignoreEnd = millis();
+  }
 }
 
 void loopMultiWait(void) {
@@ -69,8 +91,8 @@ void loopMultiWait2(void) {
 }
 
 void loopMultiBeep(void) {
-  pinMode(GPIO_BEEP, OUTPUT);
-  digitalWrite(GPIO_BEEP, HIGH);
+  pinMode(GPIO_BUZZER, OUTPUT);
+  digitalWrite(GPIO_BUZZER, HIGH);
   setInitTime(millis());
 
   setRunMode(MODE_BEEP_WAIT);
@@ -81,14 +103,14 @@ void loopMultiBeepWait(void) {
   static unsigned long before = 0;
 
   if (getPastTime() > BEEP_LEN_MS) {
-    digitalWrite(GPIO_BEEP, LOW);
-    pinMode(GPIO_BEEP, INPUT);
+    digitalWrite(GPIO_BUZZER, LOW);
+    pinMode(GPIO_BUZZER, INPUT);
     setRunMode(MODE_INIT);
   }
 
   if (getBeepType() == BEEP_TYPE_SQUARE) {
     if (micros() - before > (1000000 / getBeepHz() / 2)) {
-      digitalWrite(GPIO_BEEP, beepVal);
+      digitalWrite(GPIO_BUZZER, beepVal);
       if (beepVal == LOW) {
         beepVal = HIGH;
       } else {
