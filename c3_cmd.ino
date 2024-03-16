@@ -37,6 +37,8 @@ int cmdCommon(String &cmd) {
     txBLE(CMD_THRESHOLD   " sensor num : Change threshold of sound sensor (100-4095).\n");
     txBLE(CMD_TYPE_BEEP   " type hz    : Change type and Hz of beep (type:0-1, hz: 100-4000).\n");
     txBLE(CMD_HELP        "            : Show this message.\n");
+    txBLE("\n");
+    txBLE("  ver." VERSION "\n");
 
     return 0;
   }
