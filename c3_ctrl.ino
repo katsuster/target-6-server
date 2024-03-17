@@ -36,8 +36,9 @@ void loopCtrlInit(void) {
 
   pinMode(GPIO_START0, INPUT);
   pinMode(GPIO_START1, INPUT);
-  pinMode(GPIO_BUTTON, INPUT);
-  pinMode(GPIO_BUZZER, INPUT);
+  pinMode(GPIO_BUTTON, INPUT_PULLUP);
+  pinMode(GPIO_BUZZER, OUTPUT);
+  digitalWrite(GPIO_BUZZER, LOW);
 
   setRunMode(MODE_READY);
 }
@@ -104,7 +105,6 @@ void loopMultiBeepWait(void) {
 
   if (getPastTime() > BEEP_LEN_MS) {
     digitalWrite(GPIO_BUZZER, LOW);
-    pinMode(GPIO_BUZZER, INPUT);
     setRunMode(MODE_INIT);
   }
 
