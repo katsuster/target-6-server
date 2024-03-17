@@ -30,6 +30,19 @@ GPIO purpose of M5Stamp C3.
 | G20 | ---           | ---    | ---         | ---    |
 | G21 | ---           | ---    | TARGET_LED5 | Output |
 
+Note that polarity of SWITCH_BUTTON is low-active, other input ports are high-active.
+
+| Input signal | Low | High | Note |
+|--|--|--|--|
+| SWITCH_BUTTON | Pressed    | Released | pull up |
+| SENSORn       | Not hit    | Hit      | --- |
+
+| Output signal | Low | High | Note |
+|--|--|--|--|
+| SENSOR_NODEn  | Do nothing | Start    | --- |
+| SWITCH_BUZZER | Do nothing | Beep     | --- |
+| TARGET_LEDn   | Off        | On       | --- |
+
 GPIO pullup/pulldown voltage of M5Stamp C3.
 
 | GPIO | INPUT PULLDOWN [V] | INPUT PULLUP [V] | INPUT (Hi-Z) [V] | OUTPUT LOW [V] | OUTPUT HIGH [V] |
