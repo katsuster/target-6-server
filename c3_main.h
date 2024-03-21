@@ -21,10 +21,9 @@
 
 
 //GPIO: Controller
-#define GPIO_START0         0
-#define GPIO_START1         1
-#define GPIO_BUTTON         4
-#define GPIO_BUZZER         5
+#define GPIO_BUTTON         0
+#define GPIO_BUZZER         1
+#define GPIO_START          10
 
 //GPIO: Sensor
 #define LED_PIN             2

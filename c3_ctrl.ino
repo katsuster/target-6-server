@@ -34,11 +34,10 @@ void loopCtrlInit(void) {
     pinMode(gpios[i], INPUT);
   }
 
-  pinMode(GPIO_START0, INPUT);
-  pinMode(GPIO_START1, INPUT);
   pinMode(GPIO_BUTTON, INPUT_PULLUP);
   pinMode(GPIO_BUZZER, OUTPUT);
   digitalWrite(GPIO_BUZZER, LOW);
+  pinMode(GPIO_START, INPUT);
 
   setRunMode(MODE_READY);
 }
@@ -68,10 +67,8 @@ void loopCtrlReady(void) {
 }
 
 void loopMultiWait(void) {
-  pinMode(GPIO_START0, OUTPUT);
-  pinMode(GPIO_START1, OUTPUT);
-  digitalWrite(GPIO_START0, HIGH);
-  digitalWrite(GPIO_START1, HIGH);
+  pinMode(GPIO_START, OUTPUT);
+  digitalWrite(GPIO_START, HIGH);
 
   setInitTime(millis());
   setRunMode(MODE_MULTI_WAIT2);
@@ -79,14 +76,12 @@ void loopMultiWait(void) {
 
 void loopMultiWait2(void) {
   if (getPastTime() > LED_READY_LEN_MS) {
-    digitalWrite(0, LOW);
-    digitalWrite(1, LOW);
+    digitalWrite(GPIO_START, LOW);
 
     //Wait enough time to trigger sensor nodes
     delay(10);
 
-    pinMode(GPIO_START0, INPUT);
-    pinMode(GPIO_START1, INPUT);
+    pinMode(GPIO_START, INPUT);
     setRunMode(MODE_BEEP);
   }
 }
