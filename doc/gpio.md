@@ -16,15 +16,15 @@ GPIO purpose of M5Stamp C3.
 
 | GPIO | Controller node | direction | Sensor node | direction |
 |--|--|--|--|--|
-| G0  | SENSOR_NODE0  | Output | SENSOR0     | Input  |
-| G1  | SENSOR_NODE1  | Output | SENSOR1     | Input  |
-| G4  | SWITCH_BUTTON | Input  | SENSOR2     | Input  |
-| G5  | SWITCH_BUZZER | Output | SENSOR3     | Input  |
-| G6  | ---           | ---    | SENSOR4     | Input  |
-| G7  | ---           | ---    | SENSOR5     | Input  |
+| G0  | SWITCH_BUTTON | Input  | SENSOR0     | Input  |
+| G1  | SWITCH_BUZZER | Output | SENSOR1     | Input  |
+| G4  | CLOW_IN       | Input  | SENSOR2     | Input  |
+| G5  | CLOW_OUT      | Output | SENSOR3     | Input  |
+| G6  | CHIGH_IN      | Input  | SENSOR4     | Input  |
+| G7  | CHIGH_OUT     | Output | SENSOR5     | Input  |
 | G8  | ---           | ---    | TARGET_LED0 | Output |
 | G9  | ---           | ---    | TARGET_LED1 | Output |
-| G10 | ---           | ---    | TARGET_LED2 | Output |
+| G10 | SENSOR_NODE   | Output | TARGET_LED2 | Output |
 | G18 | ---           | ---    | TARGET_LED3 | Output |
 | G19 | ---           | ---    | TARGET_LED4 | Output |
 | G20 | ---           | ---    | ---         | ---    |
