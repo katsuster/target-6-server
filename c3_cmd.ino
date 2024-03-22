@@ -29,9 +29,9 @@ int cmdCommon(String &cmd) {
     txBLE(CMD_SHOW        "            : Show all parameters.\n");
     txBLE(CMD_BLINK       "            : Blink LED.\n");
     txBLE(CMD_INIT        " devid      : Set ID and clear timer and counts.\n");
-    txBLE(CMD_SINGLE      "            : Wait for start (single mode).\n");
-    txBLE(CMD_MULTI       "            : Wait for start (multi mode).\n");
-    txBLE(CMD_BEEP        "            : Beep (multi mode).\n");
+    txBLE(CMD_SINGLE      "            : Wait for start control node (single player mode).\n");
+    txBLE(CMD_BEEP        "            : Beep for control node.\n");
+    txBLE(CMD_SIX         "            : Wait for start sensor node (six targets mode).\n");
     txBLE(CMD_INTERVAL_AVE" sensor num : Change interval of hit detection [ms] (1-100).\n");
     txBLE(CMD_INTERVAL_HIT" sensor num : Change interval of hit to hit [ms] (10-10000).\n");
     txBLE(CMD_THRESHOLD   " sensor num : Change threshold of sound sensor (100-4095).\n");
@@ -159,15 +159,15 @@ int cmdCommon(String &cmd) {
 }
 
 int cmdControlNode(String &cmd) {
-  if (cmd.startsWith(CMD_MULTI, 0)) {
-    Serial1.printf(CMD_MULTI "\n");
+  if (cmd.startsWith(CMD_SINGLE, 0)) {
+    Serial1.printf(CMD_SINGLE "\n");
 
-    if (getRunMode() == MODE_READY || getRunMode() == MODE_MULTI_RUN) {
-      setRunMode(MODE_MULTI_WAIT);
+    if (getRunMode() == MODE_READY || getRunMode() == MODE_SINGLE_RUN) {
+      setRunMode(MODE_SINGLE_WAIT);
 
-      sendOK(CMD_MULTI);
+      sendOK(CMD_SINGLE);
     } else {
-      sendNG(CMD_MULTI);
+      sendNG(CMD_SINGLE);
     }
 
     return 0;
@@ -192,15 +192,15 @@ int cmdControlNode(String &cmd) {
 }
 
 int cmdSensorNode(String &cmd) {
-  if (cmd.startsWith(CMD_SINGLE, 0)) {
-    Serial1.printf(CMD_SINGLE "\n");
+  if (cmd.startsWith(CMD_SIX, 0)) {
+    Serial1.printf(CMD_SIX "\n");
 
-    if (getRunMode() == MODE_READY || getRunMode() == MODE_SINGLE_RUN) {
-      setRunMode(MODE_SINGLE_WAIT);
+    if (getRunMode() == MODE_READY || getRunMode() == MODE_SIX_RUN) {
+      setRunMode(MODE_SIX_WAIT);
 
-      sendOK(CMD_SINGLE);
+      sendOK(CMD_SIX);
     } else {
-      sendNG(CMD_SINGLE);
+      sendNG(CMD_SIX);
     }
 
     return 0;

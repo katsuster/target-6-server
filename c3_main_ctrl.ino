@@ -26,7 +26,7 @@ void setBeepHz(int hz)
   beep_hz = hz;
 }
 
-void loopCtrlInit(void) {
+void cnodeInit(void) {
   int gpios[] = {
     0, 1, 4, 5, 6, 7, 8, 9, 10, 18, 19, /*20, */21,
   };
@@ -42,7 +42,7 @@ void loopCtrlInit(void) {
   setRunMode(MODE_READY);
 }
 
-void loopCtrlReady(void) {
+void cnodeReady(void) {
   static int before = HIGH;
   static unsigned long ignoreEnd = 0;
   int b = digitalRead(GPIO_BUTTON);
@@ -66,15 +66,15 @@ void loopCtrlReady(void) {
   }
 }
 
-void loopMultiWait(void) {
+void cnodeSingleWait(void) {
   pinMode(GPIO_START, OUTPUT);
   digitalWrite(GPIO_START, HIGH);
 
   setInitTime(millis());
-  setRunMode(MODE_MULTI_WAIT2);
+  setRunMode(MODE_SINGLE_WAIT2);
 }
 
-void loopMultiWait2(void) {
+void cnodeSingleWait2(void) {
   if (getPastTime() > LED_READY_LEN_MS) {
     digitalWrite(GPIO_START, LOW);
 
@@ -86,7 +86,7 @@ void loopMultiWait2(void) {
   }
 }
 
-void loopMultiBeep(void) {
+void cnodeBeep(void) {
   pinMode(GPIO_BUZZER, OUTPUT);
   digitalWrite(GPIO_BUZZER, HIGH);
   setInitTime(millis());
@@ -94,7 +94,7 @@ void loopMultiBeep(void) {
   setRunMode(MODE_BEEP_WAIT);
 }
 
-void loopMultiBeepWait(void) {
+void cnodeBeepWait(void) {
   static int beepVal = LOW;
   static unsigned long before = 0;
 
@@ -120,22 +120,22 @@ void loopMultiBeepWait(void) {
 void loopController() {
   switch (getRunMode()) {
   case MODE_INIT:
-    loopCtrlInit();
+    cnodeInit();
     break;
   case MODE_READY:
-    loopCtrlReady();
+    cnodeReady();
     break;
-  case MODE_MULTI_WAIT:
-    loopMultiWait();
+  case MODE_SINGLE_WAIT:
+    cnodeSingleWait();
     break;
-  case MODE_MULTI_WAIT2:
-    loopMultiWait2();
+  case MODE_SINGLE_WAIT2:
+    cnodeSingleWait2();
     break;
   case MODE_BEEP:
-    loopMultiBeep();
+    cnodeBeep();
     break;
   case MODE_BEEP_WAIT:
-    loopMultiBeepWait();
+    cnodeBeepWait();
     break;
   }
 }

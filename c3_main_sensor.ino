@@ -3,10 +3,12 @@
 #include "c3_ble.h"
 #include "c3_main.h"
 
-static int lastVal = LOW;
-static int fallingEdge = 0;
+static int six_last_val = LOW;
+static int six_falling_edge = 0;
+static int six_cur_target;
+static int six_targets[N_SENSORS + 1];
 
-void loopSensorInit(void) {
+void snodeInit(void) {
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);
 
@@ -18,30 +20,69 @@ void loopSensorInit(void) {
   setRunMode(MODE_READY);
 }
 
-void loopSensorReady(void) {
+void snodeReady(void) {
 }
 
-void loopSingleWait(void) {
+void snodeWait(void) {
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);
 
     digitalWrite(s->pin_out, HIGH);
   }
-
-  lastVal = LOW;
-  fallingEdge = 0;
-  setInitTime(millis());
-  setRunMode(MODE_SINGLE_WAIT2);
 }
 
-void loopSingleWait2(void) {
-  int curVal = digitalRead(getSensor(0)->pin_in);
-  if (lastVal == HIGH && curVal == LOW) {
-    fallingEdge = 1;
+void sixSetupTargets(void) {
+  for (int i = 0; i < N_SENSORS; i++) {
+    six_targets[i] = i;
   }
-  lastVal = curVal;
+  six_targets[N_SENSORS] = -1;
 
-  if (fallingEdge) {
+  for (int i = 0; i < 100; i++) {
+    int pos = random(N_SENSORS);
+    int tmp;
+
+    tmp = six_targets[0];
+    six_targets[0] = six_targets[pos];
+    six_targets[pos] = tmp;
+  }
+
+  six_cur_target = 0;
+}
+
+int sixGetCurrentTarget(void) {
+  return six_targets[six_cur_target];
+}
+
+void sixNextTarget(void) {
+  if (six_cur_target >= N_SENSORS) {
+    Serial1.printf("Cannot go to next target, already finished.");
+    return;
+  }
+
+  six_cur_target++;
+}
+
+int sixIsFinishedTarget(void) {
+  return sixGetCurrentTarget() == -1;
+}
+
+void sixWait(void) {
+  snodeWait();
+
+  six_last_val = LOW;
+  six_falling_edge = 0;
+  setInitTime(millis());
+  setRunMode(MODE_SIX_WAIT2);
+}
+
+void sixWait2(void) {
+  int cur_val = digitalRead(getSensor(0)->pin_in);
+  if (six_last_val == HIGH && cur_val == LOW) {
+    six_falling_edge = 1;
+  }
+  six_last_val = cur_val;
+
+  if (six_falling_edge) {
     for (int i = 0; i < N_SENSORS; i++) {
       struct sensor *s = getSensor(i);
 
@@ -49,14 +90,14 @@ void loopSingleWait2(void) {
     }
 
     randomSeed(millis());
-    setupTargets();
+    sixSetupTargets();
     initSensors();
-    setRunMode(MODE_SINGLE_RUN);
+    setRunMode(MODE_SIX_RUN);
   }
 }
 
-void loopSingleRun(void) {
-  if (isFinishedTarget()) {
+void sixRun(void) {
+  if (sixIsFinishedTarget()) {
     for (int i = 0; i < N_SENSORS; i++) {
       struct sensor *s = getSensor(i);
       char buf[128];
@@ -74,7 +115,7 @@ void loopSingleRun(void) {
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);
 
-    if (i == getCurrentTarget()) {
+    if (i == sixGetCurrentTarget()) {
       digitalWrite(s->pin_out, HIGH);
     } else {
       digitalWrite(s->pin_out, LOW);
@@ -94,10 +135,10 @@ void loopSingleRun(void) {
       continue;
     }
 
-    if (i == getCurrentTarget()) {
+    if (i == sixGetCurrentTarget()) {
       s->mil_hit = getPastTime();
 
-      nextTarget();
+      sixNextTarget();
       break;
     }
   }
@@ -106,19 +147,19 @@ void loopSingleRun(void) {
 void loopSensor() {
   switch (getRunMode()) {
   case MODE_INIT:
-    loopSensorInit();
+    snodeInit();
     break;
   case MODE_READY:
-    loopSensorReady();
+    snodeReady();
     break;
-  case MODE_SINGLE_WAIT:
-    loopSingleWait();
+  case MODE_SIX_WAIT:
+    sixWait();
     break;
-  case MODE_SINGLE_WAIT2:
-    loopSingleWait2();
+  case MODE_SIX_WAIT2:
+    sixWait2();
     break;
-  case MODE_SINGLE_RUN:
-    loopSingleRun();
+  case MODE_SIX_RUN:
+    sixRun();
     break;
   }
 }

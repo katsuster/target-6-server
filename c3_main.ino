@@ -69,8 +69,6 @@ static struct sensor sensors[N_SENSORS] = {
 
 static int device_id = -1;
 static int run_mode = MODE_INIT;
-static int cur_pos_target;
-static int targets[N_SENSORS + 1];
 static unsigned long mil_init;
 static uint8_t col_r, col_g, col_b;
 static int blink = 0;
@@ -126,59 +124,7 @@ int getRunMode(void) {
 }
 
 void setRunMode(int m) {
-  switch (m) {
-  case MODE_INIT:
-  case MODE_READY:
-  case MODE_SINGLE_WAIT:
-  case MODE_SINGLE_WAIT2:
-  case MODE_SINGLE_RUN:
-  case MODE_MULTI_WAIT:
-  case MODE_MULTI_WAIT2:
-  case MODE_MULTI_RUN:
-  case MODE_BEEP:
-  case MODE_BEEP_WAIT:
-    break;
-  default:
-    Serial1.printf("%d is unknown mode.\n", m);
-    break;
-  }
-
   run_mode = m;
-}
-
-void setupTargets(void) {
-  for (int i = 0; i < N_SENSORS; i++) {
-    targets[i] = i;
-  }
-  targets[N_SENSORS] = -1;
-
-  for (int i = 0; i < 100; i++) {
-    int pos = random(N_SENSORS);
-    int tmp;
-
-    tmp = targets[0];
-    targets[0] = targets[pos];
-    targets[pos] = tmp;
-  }
-
-  cur_pos_target = 0;
-}
-
-int getCurrentTarget(void) {
-  return targets[cur_pos_target];
-}
-
-void nextTarget(void) {
-  if (cur_pos_target >= N_SENSORS) {
-    Serial1.printf("Cannot go to next target, already finished.");
-    return;
-  }
-
-  cur_pos_target++;
-}
-
-int isFinishedTarget(void) {
-  return getCurrentTarget() == -1;
 }
 
 unsigned long getInitTime(void) {
