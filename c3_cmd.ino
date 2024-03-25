@@ -31,7 +31,7 @@ int cmdCommon(String &cmd) {
     txBLE(CMD_INIT        " devid      : Set ID and clear timer and counts.\n");
     txBLE(CMD_SINGLE      "            : Wait for start control node (single player mode).\n");
     txBLE(CMD_BEEP        "            : Beep for control node.\n");
-    txBLE(CMD_SIX         "            : Wait for start sensor node (six targets mode).\n");
+    txBLE(CMD_TATK        "            : Wait for start sensor node (time attack game mode).\n");
     txBLE(CMD_INTERVAL_AVE" sensor num : Change interval of hit detection [ms] (1-100).\n");
     txBLE(CMD_INTERVAL_HIT" sensor num : Change interval of hit to hit [ms] (10-10000).\n");
     txBLE(CMD_THRESHOLD   " sensor num : Change threshold of sound sensor (100-4095).\n");
@@ -192,15 +192,15 @@ int cmdControlNode(String &cmd) {
 }
 
 int cmdSensorNode(String &cmd) {
-  if (cmd.startsWith(CMD_SIX, 0)) {
-    Serial1.printf(CMD_SIX "\n");
+  if (cmd.startsWith(CMD_TATK, 0)) {
+    Serial1.printf(CMD_TATK "\n");
 
-    if (getRunMode() == MODE_READY || getRunMode() == MODE_SIX_RUN) {
-      setRunMode(MODE_SIX_WAIT);
+    if (getRunMode() == MODE_READY || getRunMode() == MODE_TATK_RUN) {
+      setRunMode(MODE_TATK_WAIT);
 
-      sendOK(CMD_SIX);
+      sendOK(CMD_TATK);
     } else {
-      sendNG(CMD_SIX);
+      sendNG(CMD_TATK);
     }
 
     return 0;

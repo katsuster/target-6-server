@@ -8,16 +8,10 @@
 #include "c3_ble.h"
 #include "c3_cmd.h"
 
-BLEServer *pServer = NULL;
-BLECharacteristic *pTxCharacteristic;
-bool deviceConnected = false;
-bool oldDeviceConnected = false;
-
-#define LOCAL_NAME                  "myService"
-// Nordic nRF
-#define SERVICE_UUID              "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_RX    "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_TX    "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
+static BLEServer *pServer = NULL;
+static BLECharacteristic *pTxCharacteristic;
+static bool deviceConnected = false;
+static bool oldDeviceConnected = false;
 
 // Bluetooth LE Change Connect State
 class MyServerCallbacks: public BLEServerCallbacks {
