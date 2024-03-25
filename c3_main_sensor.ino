@@ -3,101 +3,102 @@
 #include "c3_ble.h"
 #include "c3_main.h"
 
-static int six_last_val = LOW;
-static int six_falling_edge = 0;
-static int six_cur_target;
-static int six_targets[N_SENSORS + 1];
+static struct six_game_stat six_game;
 
-void snodeInit(void) {
-  for (int i = 0; i < N_SENSORS; i++) {
-    struct sensor *s = getSensor(i);
+void sixInit(struct six_game_stat *game)
+{
+  game->gpio_last_val = LOW;
+  game->gpio_falling_edge = 0;
 
-    pinMode(s->pin_in, INPUT);
-    pinMode(s->pin_out, OUTPUT);
-    digitalWrite(s->pin_out, LOW);
-  }
-
-  setRunMode(MODE_READY);
-}
-
-void snodeReady(void) {
-}
-
-void snodeWait(void) {
-  for (int i = 0; i < N_SENSORS; i++) {
-    struct sensor *s = getSensor(i);
-
-    digitalWrite(s->pin_out, HIGH);
+  game->mil_last_hit = 0;
+  game->ind_cur_target = 0;
+  for (int i = 0; i < ARRAY_SIZE(game->targets); i++) {
+    game->targets[i] = 0;
   }
 }
 
-void sixSetupTargets(void) {
+void sixSetupTargets(struct six_game_stat *game) {
   for (int i = 0; i < N_SENSORS; i++) {
-    six_targets[i] = i;
+    game->targets[i] = i;
   }
-  six_targets[N_SENSORS] = -1;
+  game->targets[N_SENSORS] = -1;
 
+  randomSeed(millis());
   for (int i = 0; i < 100; i++) {
     int pos = random(N_SENSORS);
     int tmp;
 
-    tmp = six_targets[0];
-    six_targets[0] = six_targets[pos];
-    six_targets[pos] = tmp;
+    tmp = game->targets[0];
+    game->targets[0] = game->targets[pos];
+    game->targets[pos] = tmp;
   }
 
-  six_cur_target = 0;
+  game->mil_last_hit = millis();
+  game->ind_cur_target = 0;
 }
 
-int sixGetCurrentTarget(void) {
-  return six_targets[six_cur_target];
+int sixGetCurrentTarget(struct six_game_stat *game) {
+  return game->targets[game->ind_cur_target];
 }
 
-void sixNextTarget(void) {
-  if (six_cur_target >= N_SENSORS) {
+void sixHighlightCurrentTarget(struct six_game_stat *game) {
+  for (int i = 0; i < N_SENSORS; i++) {
+    struct sensor *s = getSensor(i);
+
+    if (i == sixGetCurrentTarget(game)) {
+      digitalWrite(s->pin_out, HIGH);
+    } else {
+      digitalWrite(s->pin_out, LOW);
+    }
+  }
+}
+
+void sixNextTarget(struct six_game_stat *game) {
+  if (game->ind_cur_target >= N_SENSORS) {
     Serial1.printf("Cannot go to next target, already finished.");
     return;
   }
 
-  six_cur_target++;
+  game->mil_last_hit = millis();
+  game->ind_cur_target++;
 }
 
-int sixIsFinishedTarget(void) {
-  return sixGetCurrentTarget() == -1;
+int sixIsFinishedTarget(struct six_game_stat *game) {
+  return sixGetCurrentTarget(game) == -1;
 }
 
-void sixWait(void) {
+void sixWait(struct six_game_stat *game) {
   snodeWait();
 
-  six_last_val = LOW;
-  six_falling_edge = 0;
+  game->gpio_last_val = LOW;
+  game->gpio_falling_edge = 0;
   setInitTime(millis());
   setRunMode(MODE_SIX_WAIT2);
 }
 
-void sixWait2(void) {
+void sixWait2(struct six_game_stat *game) {
   int cur_val = digitalRead(getSensor(0)->pin_in);
-  if (six_last_val == HIGH && cur_val == LOW) {
-    six_falling_edge = 1;
+  if (game->gpio_last_val == HIGH && cur_val == LOW) {
+    game->gpio_falling_edge = 1;
   }
-  six_last_val = cur_val;
+  game->gpio_last_val = cur_val;
 
-  if (six_falling_edge) {
+  if (game->gpio_falling_edge) {
     for (int i = 0; i < N_SENSORS; i++) {
       struct sensor *s = getSensor(i);
 
       digitalWrite(s->pin_out, LOW);
     }
 
-    randomSeed(millis());
-    sixSetupTargets();
+    sixSetupTargets(game);
     initSensors();
+    sixHighlightCurrentTarget(game);
     setRunMode(MODE_SIX_RUN);
   }
 }
 
-void sixRun(void) {
-  if (sixIsFinishedTarget()) {
+void sixRun(struct six_game_stat *game) {
+  if (sixIsFinishedTarget(game)) {
     for (int i = 0; i < N_SENSORS; i++) {
       struct sensor *s = getSensor(i);
       char buf[128];
@@ -115,7 +116,7 @@ void sixRun(void) {
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);
 
-    if (i == sixGetCurrentTarget()) {
+    if (i == sixGetCurrentTarget(game)) {
       digitalWrite(s->pin_out, HIGH);
     } else {
       digitalWrite(s->pin_out, LOW);
@@ -131,16 +132,42 @@ void sixRun(void) {
     } else {
       hit = detectHitDigital(s);
     }
-    if (!hit) {
+    //Go to next target if detect hit or 30 secs past
+    if (!hit && millis() - game->mil_last_hit < 30 * 1000) {
       continue;
     }
 
-    if (i == sixGetCurrentTarget()) {
+    if (i == sixGetCurrentTarget(game)) {
       s->mil_hit = getPastTime();
 
-      sixNextTarget();
+      sixNextTarget(game);
+      sixHighlightCurrentTarget(game);
       break;
     }
+  }
+}
+
+void snodeInit(void) {
+  for (int i = 0; i < N_SENSORS; i++) {
+    struct sensor *s = getSensor(i);
+
+    pinMode(s->pin_in, INPUT);
+    pinMode(s->pin_out, OUTPUT);
+    digitalWrite(s->pin_out, LOW);
+  }
+
+  sixInit(&six_game);
+  setRunMode(MODE_READY);
+}
+
+void snodeReady(void) {
+}
+
+void snodeWait(void) {
+  for (int i = 0; i < N_SENSORS; i++) {
+    struct sensor *s = getSensor(i);
+
+    digitalWrite(s->pin_out, HIGH);
   }
 }
 
@@ -153,13 +180,13 @@ void loopSensor() {
     snodeReady();
     break;
   case MODE_SIX_WAIT:
-    sixWait();
+    sixWait(&six_game);
     break;
   case MODE_SIX_WAIT2:
-    sixWait2();
+    sixWait2(&six_game);
     break;
   case MODE_SIX_RUN:
-    sixRun();
+    sixRun(&six_game);
     break;
   }
 }

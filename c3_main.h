@@ -81,6 +81,15 @@ struct sensor {
   uint32_t thre_hit;
 };
 
+struct six_game_stat {
+  int gpio_last_val;
+  int gpio_falling_edge;
+
+  unsigned long mil_last_hit;
+  int ind_cur_target;
+  int targets[N_SENSORS + 1];
+};
+
 void initSensors(void);
 struct sensor *getSensor(int id);
 int getDeviceID(void);
