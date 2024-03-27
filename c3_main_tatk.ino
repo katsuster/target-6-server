@@ -131,7 +131,7 @@ void tatkRun(struct tatk_game_stat *game) {
       hit = detectHitDigital(s);
     }
     //Go to next target if detect hit or 30 secs past
-    if (!hit && millis() - game->mil_last_hit < GAME_TATK_TIMEOUT_MS) {
+    if (!hit && millis() - game->mil_last_hit < TATK_TIMEOUT_MS) {
       continue;
     }
 
