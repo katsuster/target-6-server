@@ -21,7 +21,8 @@ void initGPIOs(void) {
   analogSetAttenuation(ADC_11db);
 
   for (int i = 0; i < ARRAY_SIZE(gpios); i++) {
-    pinMode(gpios[i], INPUT_PULLDOWN);
+    pinMode(gpios[i], OUTPUT);
+    digitalWrite(gpios[i], LOW);
   }
 }
 
