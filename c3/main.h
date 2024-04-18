@@ -57,10 +57,6 @@
 #define BEEP_LEN_MS              600
 #define TATK_TIMEOUT_MS          30000
 
-#define COL_R    1
-#define COL_G    2
-#define COL_B    3
-
 struct sensor {
   int id;
   uint8_t pin_in;
@@ -89,8 +85,6 @@ int getRunMode(void);
 void setRunMode(int m);
 unsigned long getInitTime(void);
 void setInitTime(unsigned long m);
-int turnonColLED(int col);
-int turnoffColLED(int col);
 int blinkLED(void);
 
 void loopController();

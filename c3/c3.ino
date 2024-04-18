@@ -7,7 +7,6 @@
 static int device_id = -1;
 static int run_mode = MODE_INIT;
 static unsigned long mil_init;
-static uint8_t col_r, col_g, col_b;
 static int blink = 0;
 
 void initGPIOs(void) {
@@ -52,34 +51,6 @@ void setInitTime(unsigned long m) {
 
 unsigned long getPastTime(void) {
   return millis() - mil_init;
-}
-
-int setColLED(int col, uint8_t val) {
-  switch (col) {
-  case COL_R:
-    col_r = val;
-    break;
-  case COL_G:
-    col_g = val;
-    break;
-  case COL_B:
-    col_b = val;
-    break;
-  default:
-    return -1;
-  }
-
-  neopixelWrite(LED_PIN, col_r, col_g, col_b);
-
-  return 0;
-}
-
-int turnonColLED(int col) {
-  return setColLED(col, 250);
-}
-
-int turnoffColLED(int col) {
-  return setColLED(col, 0);
 }
 
 int blinkLED(void) {
