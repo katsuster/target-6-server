@@ -69,7 +69,7 @@ int detectHit(struct sensor *s) {
   return v == HIGH;
 }
 
-void snodeInit(void) {
+static void snodeInit(void) {
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);
 
@@ -82,10 +82,10 @@ void snodeInit(void) {
   setRunMode(MODE_READY);
 }
 
-void snodeReady(void) {
+static void snodeReady(void) {
 }
 
-void snodeWait(void) {
+static void snodeWait(void) {
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);
 

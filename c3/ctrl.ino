@@ -26,7 +26,7 @@ void setBeepHz(int hz)
   beep_hz = hz;
 }
 
-void cnodeInit(void) {
+static void cnodeInit(void) {
   pinMode(GPIO_BUTTON, INPUT_PULLUP);
   pinMode(GPIO_BUZZER, OUTPUT);
   digitalWrite(GPIO_BUZZER, LOW);
@@ -35,7 +35,7 @@ void cnodeInit(void) {
   setRunMode(MODE_READY);
 }
 
-void cnodeReady(void) {
+static void cnodeReady(void) {
   static int before = HIGH;
   static unsigned long ignoreEnd = 0;
   int b = digitalRead(GPIO_BUTTON);
@@ -59,7 +59,7 @@ void cnodeReady(void) {
   }
 }
 
-void cnodeSingleWait(void) {
+static void cnodeSingleWait(void) {
   pinMode(GPIO_START, OUTPUT);
   digitalWrite(GPIO_START, HIGH);
 
@@ -67,7 +67,7 @@ void cnodeSingleWait(void) {
   setRunMode(MODE_SINGLE_WAIT2);
 }
 
-void cnodeSingleWait2(void) {
+static void cnodeSingleWait2(void) {
   if (getPastTime() > LED_READY_LEN_MS) {
     digitalWrite(GPIO_START, LOW);
 
@@ -79,7 +79,7 @@ void cnodeSingleWait2(void) {
   }
 }
 
-void cnodeBeep(void) {
+static void cnodeBeep(void) {
   pinMode(GPIO_BUZZER, OUTPUT);
   digitalWrite(GPIO_BUZZER, HIGH);
   setInitTime(millis());
@@ -87,7 +87,7 @@ void cnodeBeep(void) {
   setRunMode(MODE_BEEP_WAIT);
 }
 
-void cnodeBeepWait(void) {
+static void cnodeBeepWait(void) {
   static int beepVal = LOW;
   static unsigned long before = 0;
 

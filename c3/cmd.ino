@@ -4,7 +4,7 @@
 #include "cmd.h"
 #include "main.h"
 
-void sendMessage(const char *cmd, const char *result) {
+static void sendMessage(const char *cmd, const char *result) {
   char buf[128];
 
   memset(buf, 0, sizeof(buf));
@@ -12,15 +12,15 @@ void sendMessage(const char *cmd, const char *result) {
   txBLE(buf);
 }
 
-void sendOK(const char *cmd) {
+static void sendOK(const char *cmd) {
   sendMessage(cmd, "OK");
 }
 
-void sendNG(const char *cmd) {
+static void sendNG(const char *cmd) {
   sendMessage(cmd, "NG");
 }
 
-int cmdCommon(String &cmd) {
+static int cmdCommon(String &cmd) {
   int id, n, r;
 
   if (cmd.startsWith(CMD_HELP, 0)) {
@@ -87,7 +87,7 @@ int cmdCommon(String &cmd) {
   return 1;
 }
 
-int cmdControlNode(String &cmd) {
+static int cmdControlNode(String &cmd) {
   if (cmd.startsWith(CMD_SINGLE, 0)) {
     Serial1.printf(CMD_SINGLE "\n");
 
@@ -120,7 +120,7 @@ int cmdControlNode(String &cmd) {
   return 1;
 }
 
-int cmdSensorNode(String &cmd) {
+static int cmdSensorNode(String &cmd) {
   if (cmd.startsWith(CMD_TATK, 0)) {
     Serial1.printf(CMD_TATK "\n");
 

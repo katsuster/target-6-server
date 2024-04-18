@@ -77,23 +77,27 @@ struct tatk_game_stat {
   int targets[N_SENSORS + 1];
 };
 
-void initSensors(void);
-struct sensor *getSensor(int id);
+void initGPIOs(void);
 int getDeviceID(void);
 void setDeviceID(int id);
 int getRunMode(void);
 void setRunMode(int m);
 unsigned long getInitTime(void);
 void setInitTime(unsigned long m);
+unsigned long getPastTime(void);
 int blinkLED(void);
 
-void loopController();
-void loopSensor();
-
+//Controller
 int getBeepType(void);
 void setBeepType(int t);
 int getBeepHz(void);
 void setBeepHz(int hz);
+void loopController();
+
+//Sensor
+struct sensor *getSensor(int id);
+void initSensors(void);
+void loopSensor();
 
 //Time attack for six targets
 void tatkInit(struct tatk_game_stat *game);
