@@ -89,6 +89,8 @@ void setBeepHz(int hz);
 void loopController();
 
 //Sensor
+int getNumSensors(void);
+void setNumSensors(int n);
 struct sensor *getSensor(int id);
 void initSensors(void);
 void loopSensor();

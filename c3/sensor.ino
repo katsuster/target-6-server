@@ -3,6 +3,7 @@
 #include "ble.h"
 #include "main.h"
 
+static int num_sensors = N_SENSORS;
 static struct sensor sensors[N_SENSORS] = {
   [0] = {
     .id = 0,
@@ -42,6 +43,16 @@ static struct sensor sensors[N_SENSORS] = {
 };
 
 static struct tatk_game_stat tatk_game;
+
+int getNumSensors(void) {
+  return num_sensors;
+}
+
+void setNumSensors(int n) {
+  if (1 <= n && n <= N_SENSORS) {
+    num_sensors = n;
+  }
+}
 
 struct sensor *getSensor(int id) {
   return &sensors[id];
@@ -86,7 +97,7 @@ static void snodeReady(void) {
 }
 
 static void snodeWait(void) {
-  for (int i = 0; i < N_SENSORS; i++) {
+  for (int i = 0; i < getNumSensors(); i++) {
     struct sensor *s = getSensor(i);
 
     digitalWrite(s->pin_out, HIGH);

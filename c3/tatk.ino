@@ -16,14 +16,14 @@ void tatkInit(struct tatk_game_stat *game)
 }
 
 static void tatkSetupTargets(struct tatk_game_stat *game) {
-  for (int i = 0; i < N_SENSORS; i++) {
+  for (int i = 0; i < getNumSensors(); i++) {
     game->targets[i] = i;
   }
-  game->targets[N_SENSORS] = -1;
+  game->targets[getNumSensors()] = -1;
 
   randomSeed(millis());
   for (int i = 0; i < 100; i++) {
-    int pos = random(N_SENSORS);
+    int pos = random(getNumSensors());
     int tmp;
 
     tmp = game->targets[0];
@@ -40,7 +40,7 @@ static int tatkGetCurrentTarget(struct tatk_game_stat *game) {
 }
 
 static void tatkHighlightCurrentTarget(struct tatk_game_stat *game) {
-  for (int i = 0; i < N_SENSORS; i++) {
+  for (int i = 0; i < getNumSensors(); i++) {
     struct sensor *s = getSensor(i);
 
     if (i == tatkGetCurrentTarget(game)) {
@@ -52,7 +52,7 @@ static void tatkHighlightCurrentTarget(struct tatk_game_stat *game) {
 }
 
 static void tatkNextTarget(struct tatk_game_stat *game) {
-  if (game->ind_cur_target >= N_SENSORS) {
+  if (game->ind_cur_target >= getNumSensors()) {
     Serial1.printf("Cannot go to next target, already finished.");
     return;
   }
@@ -82,7 +82,7 @@ void tatkWait2(struct tatk_game_stat *game) {
   game->gpio_last_val = cur_val;
 
   if (game->gpio_falling_edge) {
-    for (int i = 0; i < N_SENSORS; i++) {
+    for (int i = 0; i < getNumSensors(); i++) {
       struct sensor *s = getSensor(i);
 
       digitalWrite(s->pin_out, LOW);
@@ -97,7 +97,7 @@ void tatkWait2(struct tatk_game_stat *game) {
 
 void tatkRun(struct tatk_game_stat *game) {
   if (tatkIsFinishedTarget(game)) {
-    for (int i = 0; i < N_SENSORS; i++) {
+    for (int i = 0; i < getNumSensors(); i++) {
       struct sensor *s = getSensor(i);
       char buf[128];
 
@@ -111,7 +111,7 @@ void tatkRun(struct tatk_game_stat *game) {
     setRunMode(MODE_INIT);
   }
 
-  for (int i = 0; i < N_SENSORS; i++) {
+  for (int i = 0; i < getNumSensors(); i++) {
     struct sensor *s = getSensor(i);
 
     if (i == tatkGetCurrentTarget(game)) {
@@ -121,7 +121,7 @@ void tatkRun(struct tatk_game_stat *game) {
     }
   }
 
-  for (int i = 0; i < N_SENSORS; i++) {
+  for (int i = 0; i < getNumSensors(); i++) {
     struct sensor *s = getSensor(i);
     int hit = detectHit(s);
 

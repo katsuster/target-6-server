@@ -43,9 +43,11 @@ static int cmdCommon(String &cmd) {
     Serial1.printf(CMD_INIT "\n");
 
     id = -1;
-    r = sscanf(cmd.c_str(), CMD_INIT " %d", &id);
-    if (r == 1 && id >= 0) {
+    n = -1;
+    r = sscanf(cmd.c_str(), CMD_INIT " %d %d", &id, &n);
+    if (r <= 2 && id >= 0) {
       setDeviceID(id);
+      setNumSensors(n);
       setRunMode(MODE_INIT);
 
       sendOK(CMD_INIT);
