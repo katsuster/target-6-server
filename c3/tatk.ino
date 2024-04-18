@@ -15,7 +15,7 @@ void tatkInit(struct tatk_game_stat *game)
   }
 }
 
-void tatkSetupTargets(struct tatk_game_stat *game) {
+static void tatkSetupTargets(struct tatk_game_stat *game) {
   for (int i = 0; i < N_SENSORS; i++) {
     game->targets[i] = i;
   }
@@ -35,11 +35,11 @@ void tatkSetupTargets(struct tatk_game_stat *game) {
   game->ind_cur_target = 0;
 }
 
-int tatkGetCurrentTarget(struct tatk_game_stat *game) {
+static int tatkGetCurrentTarget(struct tatk_game_stat *game) {
   return game->targets[game->ind_cur_target];
 }
 
-void tatkHighlightCurrentTarget(struct tatk_game_stat *game) {
+static void tatkHighlightCurrentTarget(struct tatk_game_stat *game) {
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);
 
@@ -51,7 +51,7 @@ void tatkHighlightCurrentTarget(struct tatk_game_stat *game) {
   }
 }
 
-void tatkNextTarget(struct tatk_game_stat *game) {
+static void tatkNextTarget(struct tatk_game_stat *game) {
   if (game->ind_cur_target >= N_SENSORS) {
     Serial1.printf("Cannot go to next target, already finished.");
     return;
@@ -61,7 +61,7 @@ void tatkNextTarget(struct tatk_game_stat *game) {
   game->ind_cur_target++;
 }
 
-int tatkIsFinishedTarget(struct tatk_game_stat *game) {
+static int tatkIsFinishedTarget(struct tatk_game_stat *game) {
   return tatkGetCurrentTarget(game) == -1;
 }
 

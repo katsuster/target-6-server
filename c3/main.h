@@ -27,9 +27,6 @@
 
 //GPIO: Sensor
 #define LED_PIN             2
-#define ADC_SENSOR0         0
-#define ADC_SENSOR1         1
-#define ADC_SENSOR2         4
 
 #define GPIO_SENSOR0        0
 #define GPIO_SENSOR1        1
@@ -44,9 +41,6 @@
 #define GPIO_TARGET_LED4    19
 #define GPIO_TARGET_LED5    21
 
-#define INTERVAL_AVE_DEFAULT     5
-#define INTERVAL_HIT_DEFAULT     100
-#define THRESHOLD_DEFAULT        800
 #define BEEP_TYPE_HIGH           0
 #define BEEP_TYPE_SQUARE         1
 #define BEEP_HZ_DEFAULT          440
@@ -99,13 +93,8 @@ struct sensor *getSensor(int id);
 void initSensors(void);
 void loopSensor();
 
-//Time attack for six targets
+//Time attack
 void tatkInit(struct tatk_game_stat *game);
-void tatkSetupTargets(struct tatk_game_stat *game);
-int tatkGetCurrentTarget(struct tatk_game_stat *game);
-void tatkHighlightCurrentTarget(struct tatk_game_stat *game);
-void tatkNextTarget(struct tatk_game_stat *game);
-int tatkIsFinishedTarget(struct tatk_game_stat *game);
 void tatkWait(struct tatk_game_stat *game);
 void tatkWait2(struct tatk_game_stat *game);
 void tatkRun(struct tatk_game_stat *game);
