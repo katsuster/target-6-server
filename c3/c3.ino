@@ -1,8 +1,8 @@
 //#include <M5Stack.h>
 #include <Arduino.h>
 
-#include "c3_ble.h"
-#include "c3_main.h"
+#include "ble.h"
+#include "main.h"
 
 static int device_id = -1;
 static int run_mode = MODE_INIT;

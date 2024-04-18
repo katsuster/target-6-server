@@ -5,8 +5,8 @@
 #include <BLEUtils.h>
 #include <BLE2902.h>
 
-#include "c3_ble.h"
-#include "c3_cmd.h"
+#include "ble.h"
+#include "cmd.h"
 
 static BLEServer *pServer = NULL;
 static BLECharacteristic *pTxCharacteristic;

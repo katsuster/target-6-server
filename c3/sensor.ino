@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#include "c3_ble.h"
-#include "c3_main.h"
+#include "ble.h"
+#include "main.h"
 
 static struct sensor sensors[N_SENSORS] = {
   [0] = {

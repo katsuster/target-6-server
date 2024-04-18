@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
-#include "c3_ble.h"
-#include "c3_cmd.h"
-#include "c3_main.h"
+#include "ble.h"
+#include "cmd.h"
+#include "main.h"
 
 void sendMessage(const char *cmd, const char *result) {
   char buf[128];

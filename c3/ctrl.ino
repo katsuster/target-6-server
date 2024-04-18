@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#include "c3_ble.h"
-#include "c3_main.h"
+#include "ble.h"
+#include "main.h"
 
 static int beep_type = BEEP_TYPE_HIGH;
 static int beep_hz = BEEP_HZ_DEFAULT;

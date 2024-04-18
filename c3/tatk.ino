@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#include "c3_ble.h"
-#include "c3_main.h"
+#include "ble.h"
+#include "main.h"
 
 void tatkInit(struct tatk_game_stat *game)
 {
