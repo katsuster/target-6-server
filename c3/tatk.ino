@@ -113,16 +113,6 @@ void tatkRun(struct tatk_game_stat *game) {
 
   for (int i = 0; i < getNumSensors(); i++) {
     struct sensor *s = getSensor(i);
-
-    if (i == tatkGetCurrentTarget(game)) {
-      digitalWrite(s->pin_out, HIGH);
-    } else {
-      digitalWrite(s->pin_out, LOW);
-    }
-  }
-
-  for (int i = 0; i < getNumSensors(); i++) {
-    struct sensor *s = getSensor(i);
     int hit = detectHit(s);
 
     //Go to next target if detect hit or 30 secs past
