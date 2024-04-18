@@ -123,13 +123,8 @@ void tatkRun(struct tatk_game_stat *game) {
 
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);
-    int hit;
+    int hit = detectHit(s);
 
-    if (s->pin_type_in == PIN_TYPE_ANALOG) {
-      hit = detectHitAnalog(s);
-    } else {
-      hit = detectHitDigital(s);
-    }
     //Go to next target if detect hit or 30 secs past
     if (!hit && millis() - game->mil_last_hit < TATK_TIMEOUT_MS) {
       continue;

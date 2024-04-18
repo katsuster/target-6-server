@@ -4,15 +4,11 @@
 #define VERSION             "0.1.5"
 
 #define CMD_HELP            "help"
-#define CMD_SHOW            "show"
 #define CMD_BLINK           "blink"
 #define CMD_INIT            "init"
 #define CMD_TATK            "tatk"
 #define CMD_SINGLE          "single"
 #define CMD_BEEP            "beep"
-#define CMD_INTERVAL_AVE    "iave"
-#define CMD_INTERVAL_HIT    "ihit"
-#define CMD_THRESHOLD       "thre"
 #define CMD_TYPE_BEEP       "tbeep"
 
 void onReceive(String &cmd);

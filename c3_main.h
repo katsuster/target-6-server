@@ -5,9 +5,6 @@
 
 #define N_SENSORS    6
 
-#define PIN_TYPE_ANALOG     1
-#define PIN_TYPE_DIGITAL    2
-
 #define MODE_INIT            0
 #define MODE_READY           10
 #define MODE_TATK_WAIT       20
@@ -66,23 +63,13 @@
 
 struct sensor {
   int id;
-  int pin_type_in;
-  int pin_type_out;
   uint8_t pin_in;
   uint8_t pin_out;
-  int col;
 
-  int ave;
-  int ave_cnt;
-  int ave_sum;
   unsigned long mil_st;
   unsigned long mil_last;
   int cnt_hit;
   unsigned long mil_hit;
-
-  unsigned long inter_ave;
-  unsigned long inter_hit;
-  uint32_t thre_hit;
 };
 
 struct tatk_game_stat {
