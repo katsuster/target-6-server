@@ -78,6 +78,17 @@ int detectHit(struct sensor *s) {
   return v == HIGH;
 }
 
+int detectFallingEdge(struct sensor *s, int *last_val) {
+  int cur_val = digitalRead(s->pin_in);
+
+  if (*last_val == HIGH && cur_val == LOW) {
+    return 1;
+  }
+  *last_val = cur_val;
+
+  return 0;
+}
+
 static void snodeInit(void) {
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);

@@ -62,15 +62,6 @@ struct sensor {
   unsigned long mil_hit;
 };
 
-struct tatk_game_stat {
-  int gpio_last_val;
-  int gpio_falling_edge;
-
-  unsigned long mil_last_hit;
-  int ind_cur_target;
-  int targets[N_SENSORS + 1];
-};
-
 void initGPIOs(void);
 int getDeviceID(void);
 void setDeviceID(int id);
@@ -93,6 +84,8 @@ int getNumSensors(void);
 void setNumSensors(int n);
 struct sensor *getSensor(int id);
 void initSensors(void);
+int detectHit(struct sensor *s);
+int detectFallingEdge(struct sensor *s, int *last_val);
 void loopSensor(void);
 
 //Time attack
