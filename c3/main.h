@@ -7,6 +7,9 @@
 
 #define MODE_INIT            0
 #define MODE_READY           10
+#define MODE_CNTUP_WAIT      100
+#define MODE_CNTUP_WAIT2     101
+#define MODE_CNTUP_RUN       102
 #define MODE_TATK_WAIT       20
 #define MODE_TATK_WAIT2      21
 #define MODE_TATK_RUN        30
@@ -84,9 +87,16 @@ int getNumSensors(void);
 void setNumSensors(int n);
 struct sensor *getSensor(int id);
 void initSensors(void);
+void turnOnAllTargets(void);
+void turnOffAllTargets(void);
+void txAllTargets(void);
 int detectHit(struct sensor *s);
 int detectFallingEdge(struct sensor *s, int *last_val);
 void loopSensor(void);
+
+//Count up
+void initCntup(void);
+void loopCntup(void);
 
 //Time attack
 void initTatk(void);
