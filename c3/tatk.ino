@@ -6,6 +6,7 @@
 struct tatk_game_stat {
   int gpio_last_val;
 
+  unsigned long timeout;
   unsigned long mil_last_hit;
   int ind_cur_target;
   int targets[N_SENSORS + 1];
@@ -17,6 +18,7 @@ static void tatkInit(struct tatk_game_stat *game)
 {
   game->gpio_last_val = LOW;
 
+  game->timeout = TATK_TIMEOUT_MS;
   game->mil_last_hit = 0;
   game->ind_cur_target = 0;
   for (int i = 0; i < ARRAY_SIZE(game->targets); i++) {
@@ -70,7 +72,7 @@ static void tatkNextTarget(struct tatk_game_stat *game) {
   game->ind_cur_target++;
 }
 
-static int tatkIsFinishedTarget(struct tatk_game_stat *game) {
+static int tatkIsFinished(struct tatk_game_stat *game) {
   return tatkGetCurrentTarget(game) == -1;
 }
 
@@ -78,7 +80,6 @@ static void tatkWait(struct tatk_game_stat *game) {
   turnOnAllTargets();
 
   game->gpio_last_val = LOW;
-  setInitTime(millis());
   setRunMode(MODE_TATK_WAIT2);
 }
 
@@ -87,40 +88,31 @@ static void tatkWait2(struct tatk_game_stat *game) {
 
   if (falling_edge) {
     turnOffAllTargets();
+    initSensors();
 
     tatkSetupTargets(game);
-    initSensors();
     tatkHighlightCurrentTarget(game);
     setRunMode(MODE_TATK_RUN);
   }
 }
 
 static void tatkRun(struct tatk_game_stat *game) {
-  if (tatkIsFinishedTarget(game)) {
-    for (int i = 0; i < getNumSensors(); i++) {
-      struct sensor *s = getSensor(i);
-      char buf[128];
-
-      sprintf(buf, "d:%d hit s:%d %d:%02d.%03d hit:%d\n",
-          getDeviceID(), s->id,
-          s->mil_hit / 1000 / 60, (s->mil_hit / 1000) % 60, s->mil_hit % 1000,
-          s->cnt_hit);
-      txBLE(buf);
-    }
-
+  if (tatkIsFinished(game)) {
+    txAllTargets();
     setRunMode(MODE_INIT);
+    return;
   }
 
   for (int i = 0; i < getNumSensors(); i++) {
-    struct sensor *s = getSensor(i);
-    int hit = detectHit(s);
-
-    //Go to next target if detect hit or 30 secs past
-    if (!hit && millis() - game->mil_last_hit < TATK_TIMEOUT_MS) {
+    if (i != tatkGetCurrentTarget(game)) {
       continue;
     }
 
-    if (i == tatkGetCurrentTarget(game)) {
+    struct sensor *s = getSensor(i);
+    int hit = detectHit(s);
+
+    //Go to next target if detect hit or timeout
+    if (hit || millis() - game->mil_last_hit >= game->timeout) {
       s->mil_hit = getPastTime();
 
       tatkNextTarget(game);

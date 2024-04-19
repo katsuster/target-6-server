@@ -60,10 +60,6 @@ void initSensors(void) {
   for (int i = 0; i < N_SENSORS; i++) {
     struct sensor *s = getSensor(i);
 
-    pinMode(s->pin_in, INPUT);
-    pinMode(s->pin_out, OUTPUT);
-    digitalWrite(s->pin_out, LOW);
-
     s->mil_st = millis();
     s->cnt_hit = 0;
     s->mil_hit = 0;
@@ -85,6 +81,19 @@ void turnOffAllTargets(void) {
     struct sensor *s = getSensor(i);
 
     digitalWrite(s->pin_out, LOW);
+  }
+}
+
+void txAllTargets(void) {
+  for (int i = 0; i < getNumSensors(); i++) {
+    struct sensor *s = getSensor(i);
+    char buf[128];
+
+    sprintf(buf, "d:%d hit s:%d %d:%02d.%03d hit:%d\n",
+        getDeviceID(), s->id,
+        s->mil_hit / 1000 / 60, (s->mil_hit / 1000) % 60, s->mil_hit % 1000,
+        s->cnt_hit);
+    txBLE(buf);
   }
 }
 
@@ -114,6 +123,7 @@ static void snodeInit(void) {
     digitalWrite(s->pin_out, LOW);
   }
 
+  initCntup();
   initTatk();
   setRunMode(MODE_READY);
 }
@@ -130,6 +140,7 @@ void loopSensor() {
     snodeReady();
     break;
   default:
+    loopCntup();
     loopTatk();
     break;
   }
