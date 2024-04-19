@@ -42,8 +42,6 @@ static struct sensor sensors[N_SENSORS] = {
   },
 };
 
-static struct tatk_game_stat tatk_game;
-
 int getNumSensors(void) {
   return num_sensors;
 }
@@ -89,19 +87,11 @@ static void snodeInit(void) {
     digitalWrite(s->pin_out, LOW);
   }
 
-  tatkInit(&tatk_game);
+  initTatk();
   setRunMode(MODE_READY);
 }
 
 static void snodeReady(void) {
-}
-
-static void snodeWait(void) {
-  for (int i = 0; i < getNumSensors(); i++) {
-    struct sensor *s = getSensor(i);
-
-    digitalWrite(s->pin_out, HIGH);
-  }
 }
 
 void loopSensor() {
@@ -112,14 +102,8 @@ void loopSensor() {
   case MODE_READY:
     snodeReady();
     break;
-  case MODE_TATK_WAIT:
-    tatkWait(&tatk_game);
-    break;
-  case MODE_TATK_WAIT2:
-    tatkWait2(&tatk_game);
-    break;
-  case MODE_TATK_RUN:
-    tatkRun(&tatk_game);
+  default:
+    loopTatk();
     break;
   }
 }

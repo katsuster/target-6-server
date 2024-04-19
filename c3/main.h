@@ -86,19 +86,17 @@ int getBeepType(void);
 void setBeepType(int t);
 int getBeepHz(void);
 void setBeepHz(int hz);
-void loopController();
+void loopController(void);
 
 //Sensor
 int getNumSensors(void);
 void setNumSensors(int n);
 struct sensor *getSensor(int id);
 void initSensors(void);
-void loopSensor();
+void loopSensor(void);
 
 //Time attack
-void tatkInit(struct tatk_game_stat *game);
-void tatkWait(struct tatk_game_stat *game);
-void tatkWait2(struct tatk_game_stat *game);
-void tatkRun(struct tatk_game_stat *game);
+void initTatk(void);
+void loopTatk(void);
 
 #endif /* C3_MAIN_H__ */

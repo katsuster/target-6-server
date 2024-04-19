@@ -66,7 +66,7 @@ int blinkLED(void) {
   return 0;
 }
 
-void loop() {
+void loop(void) {
   if (getDeviceID() == 0) {
     loopController();
   } else if (getDeviceID() > 0) {
@@ -76,7 +76,7 @@ void loop() {
   loopBLE();
 }
 
-void setup() {
+void setup(void) {
   Serial1.begin(115200, SERIAL_8N1, GPIO_UART1_RX, GPIO_UART1_TX);
 
   uint8_t macBT[6];

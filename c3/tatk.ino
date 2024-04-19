@@ -3,7 +3,9 @@
 #include "ble.h"
 #include "main.h"
 
-void tatkInit(struct tatk_game_stat *game)
+static struct tatk_game_stat tatk_game;
+
+static void tatkInit(struct tatk_game_stat *game)
 {
   game->gpio_last_val = LOW;
   game->gpio_falling_edge = 0;
@@ -65,8 +67,12 @@ static int tatkIsFinishedTarget(struct tatk_game_stat *game) {
   return tatkGetCurrentTarget(game) == -1;
 }
 
-void tatkWait(struct tatk_game_stat *game) {
-  snodeWait();
+static void tatkWait(struct tatk_game_stat *game) {
+  for (int i = 0; i < getNumSensors(); i++) {
+    struct sensor *s = getSensor(i);
+
+    digitalWrite(s->pin_out, HIGH);
+  }
 
   game->gpio_last_val = LOW;
   game->gpio_falling_edge = 0;
@@ -74,7 +80,7 @@ void tatkWait(struct tatk_game_stat *game) {
   setRunMode(MODE_TATK_WAIT2);
 }
 
-void tatkWait2(struct tatk_game_stat *game) {
+static void tatkWait2(struct tatk_game_stat *game) {
   int cur_val = digitalRead(getSensor(0)->pin_in);
   if (game->gpio_last_val == HIGH && cur_val == LOW) {
     game->gpio_falling_edge = 1;
@@ -95,7 +101,7 @@ void tatkWait2(struct tatk_game_stat *game) {
   }
 }
 
-void tatkRun(struct tatk_game_stat *game) {
+static void tatkRun(struct tatk_game_stat *game) {
   if (tatkIsFinishedTarget(game)) {
     for (int i = 0; i < getNumSensors(); i++) {
       struct sensor *s = getSensor(i);
@@ -127,5 +133,23 @@ void tatkRun(struct tatk_game_stat *game) {
       tatkHighlightCurrentTarget(game);
       break;
     }
+  }
+}
+
+void initTatk() {
+  tatkInit(&tatk_game);
+}
+
+void loopTatk() {
+  switch (getRunMode()) {
+  case MODE_TATK_WAIT:
+    tatkWait(&tatk_game);
+    break;
+  case MODE_TATK_WAIT2:
+    tatkWait2(&tatk_game);
+    break;
+  case MODE_TATK_RUN:
+    tatkRun(&tatk_game);
+    break;
   }
 }

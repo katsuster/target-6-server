@@ -110,7 +110,7 @@ static void cnodeBeepWait(void) {
   }
 }
 
-void loopController() {
+void loopController(void) {
   switch (getRunMode()) {
   case MODE_INIT:
     cnodeInit();
