@@ -75,11 +75,7 @@ static int tatkIsFinishedTarget(struct tatk_game_stat *game) {
 }
 
 static void tatkWait(struct tatk_game_stat *game) {
-  for (int i = 0; i < getNumSensors(); i++) {
-    struct sensor *s = getSensor(i);
-
-    digitalWrite(s->pin_out, HIGH);
-  }
+  turnOnAllTargets();
 
   game->gpio_last_val = LOW;
   setInitTime(millis());
@@ -90,11 +86,7 @@ static void tatkWait2(struct tatk_game_stat *game) {
   int falling_edge = detectFallingEdge(getSensor(0), &game->gpio_last_val);
 
   if (falling_edge) {
-    for (int i = 0; i < getNumSensors(); i++) {
-      struct sensor *s = getSensor(i);
-
-      digitalWrite(s->pin_out, LOW);
-    }
+    turnOffAllTargets();
 
     tatkSetupTargets(game);
     initSensors();

@@ -72,6 +72,22 @@ void initSensors(void) {
   setInitTime(millis());
 }
 
+void turnOnAllTargets(void) {
+  for (int i = 0; i < getNumSensors(); i++) {
+    struct sensor *s = getSensor(i);
+
+    digitalWrite(s->pin_out, HIGH);
+  }
+}
+
+void turnOffAllTargets(void) {
+  for (int i = 0; i < getNumSensors(); i++) {
+    struct sensor *s = getSensor(i);
+
+    digitalWrite(s->pin_out, LOW);
+  }
+}
+
 int detectHit(struct sensor *s) {
   int v = digitalRead(s->pin_in);
 
