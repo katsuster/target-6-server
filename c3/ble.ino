@@ -36,7 +36,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
 };
 
 // Bluetooth LE initialize
-void initBLE() {
+void initBLE(void) {
   // Create the BLE Device
   BLEDevice::init(LOCAL_NAME);
 
@@ -65,7 +65,7 @@ void initBLE() {
   pServer->getAdvertising()->start();
 }
 
-void loopBLE() {
+void loopBLE(void) {
     // disconnecting
     if (!deviceConnected && oldDeviceConnected) {
         delay(1000);
