@@ -26,13 +26,18 @@ static int cmdCommon(String &cmd) {
   if (cmd.startsWith(CMD_HELP, 0)) {
     Serial1.printf(CMD_HELP "\n");
 
-    txBLE(CMD_BLINK       "            : Blink LED.\n");
+    txBLE(CMD_HELP        "            : Show this message.\n");
     txBLE(CMD_INIT        " devid      : Set ID and clear timer and counts.\n");
+    txBLE(CMD_BLINK       "            : Blink LED.\n");
+    txBLE(CMD_TYPE_BEEP   " type hz    : Change type and Hz of beep (type:0-1, hz: 100-4000).\n");
+    txBLE("\n");
+    txBLE("For control node.\n");
     txBLE(CMD_SINGLE      "            : Wait for start control node (single player mode).\n");
     txBLE(CMD_BEEP        "            : Beep for control node.\n");
+    txBLE("\n");
+    txBLE("For sensor node.\n");
+    txBLE(CMD_CNTUP       "            : Wait for start sensor node (count up game mode).\n");
     txBLE(CMD_TATK        "            : Wait for start sensor node (time attack game mode).\n");
-    txBLE(CMD_TYPE_BEEP   " type hz    : Change type and Hz of beep (type:0-1, hz: 100-4000).\n");
-    txBLE(CMD_HELP        "            : Show this message.\n");
     txBLE("\n");
     txBLE("  ver." VERSION "\n");
 
@@ -123,6 +128,20 @@ static int cmdControlNode(String &cmd) {
 }
 
 static int cmdSensorNode(String &cmd) {
+  if (cmd.startsWith(CMD_CNTUP, 0)) {
+    Serial1.printf(CMD_CNTUP "\n");
+
+    if (getRunMode() == MODE_READY || getRunMode() == MODE_CNTUP_RUN) {
+      setRunMode(MODE_CNTUP_WAIT);
+
+      sendOK(CMD_CNTUP);
+    } else {
+      sendNG(CMD_CNTUP);
+    }
+
+    return 0;
+  }
+
   if (cmd.startsWith(CMD_TATK, 0)) {
     Serial1.printf(CMD_TATK "\n");
 
