@@ -52,6 +52,7 @@
 
 #define LED_READY_LEN_MS         3000
 #define BEEP_LEN_MS              600
+#define CNTUP_TIMEOUT_MS         30000
 #define TATK_TIMEOUT_MS          30000
 
 struct sensor {

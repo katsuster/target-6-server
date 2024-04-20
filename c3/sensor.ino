@@ -89,7 +89,7 @@ void txAllTargets(void) {
     struct sensor *s = getSensor(i);
     char buf[128];
 
-    sprintf(buf, "d:%d hit s:%d %d:%02d.%03d hit:%d\n",
+    sprintf(buf, "d:%d hit s:%d %d:%02d.%03d h:%d\n",
         getDeviceID(), s->id,
         s->mil_hit / 1000 / 60, (s->mil_hit / 1000) % 60, s->mil_hit % 1000,
         s->cnt_hit);
