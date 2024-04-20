@@ -103,22 +103,16 @@ static void tatkRun(struct tatk_game_stat *game) {
     return;
   }
 
-  for (int i = 0; i < getNumSensors(); i++) {
-    if (i != tatkGetCurrentTarget(game)) {
-      continue;
-    }
+  int index = tatkGetCurrentTarget(game);
+  struct sensor *s = getSensor(index);
+  int hit = detectHit(s);
 
-    struct sensor *s = getSensor(i);
-    int hit = detectHit(s);
+  //Go to next target if detect hit or timeout
+  if (hit || millis() - game->mil_last_hit >= game->timeout) {
+    s->mil_hit = getPastTime();
 
-    //Go to next target if detect hit or timeout
-    if (hit || millis() - game->mil_last_hit >= game->timeout) {
-      s->mil_hit = getPastTime();
-
-      tatkNextTarget(game);
-      tatkHighlightCurrentTarget(game);
-      break;
-    }
+    tatkNextTarget(game);
+    tatkHighlightCurrentTarget(game);
   }
 }
 
