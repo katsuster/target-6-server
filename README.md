@@ -26,6 +26,12 @@ Please refer these repositories if you have interest in other modules of `target
 ## How to use
 
 
+## Source structures
+
+* c3/
+  * For M5Stamp C3
+
+
 ## Other documents
 
 * [GPIO](doc/gpio.md)
