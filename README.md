@@ -25,6 +25,9 @@ Please refer these repositories if you have interest in other modules of `target
 
 ## How to use
 
+* [Setup Arduino IDE](doc/setup_arduino.md)
+* [Build and Upload](doc/build.md)
+
 
 ## Source structures
 
