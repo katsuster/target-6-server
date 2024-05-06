@@ -1,4 +1,4 @@
-# Build and Upload
+# Build and Upload for M5Stamp C3
 
 Download a source code archive or clone source code repoistory from GitHub.
 Please refer:

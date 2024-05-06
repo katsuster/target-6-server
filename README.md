@@ -26,7 +26,7 @@ Please refer these repositories if you have interest in other modules of `target
 ## How to use
 
 * [Setup Arduino IDE](doc/setup_arduino.md)
-* [Build and Upload](doc/build.md)
+* [Build and Upload for M5Stamp C3](doc/c3_build.md)
 
 
 ## Source structures
