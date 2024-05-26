@@ -50,9 +50,10 @@
 #define BEEP_HZ_MIN              100
 #define BEEP_HZ_MAX              4000
 
+#define CNTUP_TIMEOUT_DEFAULT_MS    30000
+
 #define LED_READY_LEN_MS         3000
 #define BEEP_LEN_MS              600
-#define CNTUP_TIMEOUT_MS         30000
 #define TATK_TIMEOUT_MS          30000
 
 struct sensor {
@@ -96,6 +97,8 @@ int detectFallingEdge(struct sensor *s, int *last_val);
 void loopSensor(void);
 
 //Count up
+unsigned long getCntupTimeout(void);
+void setCntupTimeout(unsigned long msec);
 void initCntup(void);
 void loopCntup(void);
 

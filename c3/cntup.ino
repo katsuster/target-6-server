@@ -3,6 +3,10 @@
 #include "ble.h"
 #include "main.h"
 
+struct cntup_game_param {
+  unsigned long timeout;
+};
+
 struct cntup_game_stat {
   int gpio_last_val;
 
@@ -13,13 +17,16 @@ struct cntup_game_stat {
   int targets[N_SENSORS + 1];
 };
 
+static struct cntup_game_param cntup_param = {
+  .timeout = CNTUP_TIMEOUT_DEFAULT_MS,
+};
 static struct cntup_game_stat cntup_game;
 
 static void cntupInit(struct cntup_game_stat *game)
 {
   game->gpio_last_val = LOW;
 
-  game->timeout = CNTUP_TIMEOUT_MS;
+  game->timeout = CNTUP_TIMEOUT_DEFAULT_MS;
   game->last_target = -1;
   game->mil_last_hit = 0;
   game->ind_cur_target = 0;
@@ -53,6 +60,7 @@ static void cntupSetupTargets(struct cntup_game_stat *game) {
   }
 
   //do not touch game->last_target
+  game->timeout = getCntupTimeout();
   game->mil_last_hit = millis();
   game->ind_cur_target = 0;
 }
@@ -130,6 +138,14 @@ static void cntupRun(struct cntup_game_stat *game) {
     cntupNextTarget(game);
     cntupHighlightCurrentTarget(game);
   }
+}
+
+unsigned long getCntupTimeout(void) {
+  return cntup_param.timeout;
+}
+
+void setCntupTimeout(unsigned long msec) {
+  cntup_param.timeout = msec;
 }
 
 void initCntup(void) {
