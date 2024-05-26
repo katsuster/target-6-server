@@ -21,7 +21,7 @@ static void sendNG(const char *cmd) {
 }
 
 static int cmdCommon(String &cmd) {
-  int id, n, r;
+  int id, r;
 
   if (cmd.startsWith(CMD_HELP, 0)) {
     Serial1.printf(CMD_HELP "\n");
@@ -48,11 +48,9 @@ static int cmdCommon(String &cmd) {
     Serial1.printf(CMD_INIT "\n");
 
     id = -1;
-    n = -1;
-    r = sscanf(cmd.c_str(), CMD_INIT " %d %d", &id, &n);
-    if (r <= 2 && id >= 0) {
+    r = sscanf(cmd.c_str(), CMD_INIT " %d", &id);
+    if (r <= 1 && id >= 0) {
       setDeviceID(id);
-      setNumSensors(n);
       setRunMode(MODE_INIT);
 
       sendOK(CMD_INIT);
@@ -128,10 +126,17 @@ static int cmdControlNode(String &cmd) {
 }
 
 static int cmdSensorNode(String &cmd) {
+  int r;
+
   if (cmd.startsWith(CMD_CNTUP, 0)) {
+    int sec = CNTUP_TIMEOUT_DEFAULT_MS;
+
     Serial1.printf(CMD_CNTUP "\n");
 
+    r = sscanf(cmd.c_str(), CMD_CNTUP " %d", &sec);
     if (getRunMode() == MODE_READY || getRunMode() == MODE_CNTUP_RUN) {
+      setNumSensors(N_SENSORS);
+      setCntupTimeout(sec);
       setRunMode(MODE_CNTUP_WAIT);
 
       sendOK(CMD_CNTUP);
@@ -143,9 +148,13 @@ static int cmdSensorNode(String &cmd) {
   }
 
   if (cmd.startsWith(CMD_TATK, 0)) {
+    int n = N_SENSORS;
+
     Serial1.printf(CMD_TATK "\n");
 
+    r = sscanf(cmd.c_str(), CMD_TATK " %d", &n);
     if (getRunMode() == MODE_READY || getRunMode() == MODE_TATK_RUN) {
+      setNumSensors(n);
       setRunMode(MODE_TATK_WAIT);
 
       sendOK(CMD_TATK);
