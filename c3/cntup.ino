@@ -101,7 +101,7 @@ static int cntupIsFinished(struct cntup_game_stat *game) {
 }
 
 static void cntupWait(struct cntup_game_stat *game) {
-  turnOnAllTargets();
+  turnOffAllTargets();
 
   game->gpio_last_val = LOW;
   setRunMode(MODE_CNTUP_WAIT2);

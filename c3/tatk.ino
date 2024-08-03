@@ -77,7 +77,7 @@ static int tatkIsFinished(struct tatk_game_stat *game) {
 }
 
 static void tatkWait(struct tatk_game_stat *game) {
-  turnOnAllTargets();
+  turnOffAllTargets();
 
   game->gpio_last_val = LOW;
   setRunMode(MODE_TATK_WAIT2);
