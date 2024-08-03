@@ -56,6 +56,7 @@
 #define CNTUP_TIMEOUT_DEFAULT_MS    30000
 
 #define SSHOT_TIMEOUT_MS         30000
+#define SSHOT_BLINK_MS           500
 
 #define LED_READY_LEN_MS         3000
 #define BEEP_LEN_MS              600
