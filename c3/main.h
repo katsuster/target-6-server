@@ -10,6 +10,9 @@
 #define MODE_CNTUP_WAIT      100
 #define MODE_CNTUP_WAIT2     101
 #define MODE_CNTUP_RUN       102
+#define MODE_SSHOT_WAIT      200
+#define MODE_SSHOT_WAIT2     201
+#define MODE_SSHOT_RUN       230
 #define MODE_TATK_WAIT       20
 #define MODE_TATK_WAIT2      21
 #define MODE_TATK_RUN        30
@@ -51,6 +54,8 @@
 #define BEEP_HZ_MAX              4000
 
 #define CNTUP_TIMEOUT_DEFAULT_MS    30000
+
+#define SSHOT_TIMEOUT_MS         30000
 
 #define LED_READY_LEN_MS         3000
 #define BEEP_LEN_MS              600
@@ -101,6 +106,10 @@ unsigned long getCntupTimeout(void);
 void setCntupTimeout(unsigned long msec);
 void initCntup(void);
 void loopCntup(void);
+
+//Speed shoot
+void initSshot(void);
+void loopSshot(void);
 
 //Time attack
 void initTatk(void);

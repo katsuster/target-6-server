@@ -1,7 +1,7 @@
 #ifndef C3_CMD_H__
 #define C3_CMD_H__
 
-#define VERSION             "0.1.6"
+#define VERSION             "0.1.7"
 
 #define CMD_HELP            "help"
 #define CMD_INIT            "init"
@@ -14,6 +14,7 @@
 
 //Sensor
 #define CMD_CNTUP           "cntup"
+#define CMD_SSHOT           "sshot"
 #define CMD_TATK            "tatk"
 
 void onReceive(String &cmd);

@@ -37,6 +37,7 @@ static int cmdCommon(String &cmd) {
     txBLE("\n");
     txBLE("For sensor node.\n");
     txBLE(CMD_CNTUP       "            : Wait for start sensor node (count up game mode).\n");
+    txBLE(CMD_SSHOT       "            : Wait for start sensor node (speed shoot game mode).\n");
     txBLE(CMD_TATK        "            : Wait for start sensor node (time attack game mode).\n");
     txBLE("\n");
     txBLE("  ver." VERSION "\n");
@@ -142,6 +143,24 @@ static int cmdSensorNode(String &cmd) {
       sendOK(CMD_CNTUP);
     } else {
       sendNG(CMD_CNTUP);
+    }
+
+    return 0;
+  }
+
+  if (cmd.startsWith(CMD_SSHOT, 0)) {
+    int n = N_SENSORS;
+
+    Serial1.printf(CMD_SSHOT "\n");
+
+    r = sscanf(cmd.c_str(), CMD_SSHOT " %d", &n);
+    if (getRunMode() == MODE_READY || getRunMode() == MODE_SSHOT_RUN) {
+      setNumSensors(n);
+      setRunMode(MODE_SSHOT_WAIT);
+
+      sendOK(CMD_SSHOT);
+    } else {
+      sendNG(CMD_SSHOT);
     }
 
     return 0;

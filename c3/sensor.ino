@@ -141,6 +141,7 @@ void loopSensor() {
     break;
   default:
     loopCntup();
+    loopSshot();
     loopTatk();
     break;
   }
