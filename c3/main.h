@@ -82,6 +82,8 @@ unsigned long getInitTime(void);
 void setInitTime(unsigned long m);
 unsigned long getPastTime(void);
 int blinkLED(void);
+int onLED(void);
+int offLED(void);
 
 //Controller
 int getBeepType(void);

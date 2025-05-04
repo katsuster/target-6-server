@@ -6,6 +6,8 @@
 #define CMD_HELP            "help"
 #define CMD_INIT            "init"
 #define CMD_BLINK           "blink"
+#define CMD_LED_ON          "ledon"
+#define CMD_LED_OFF         "ledoff"
 #define CMD_TYPE_BEEP       "tbeep"
 
 //Controller

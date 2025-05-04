@@ -51,6 +51,7 @@ static int cmdCommon(String &cmd) {
     id = -1;
     r = sscanf(cmd.c_str(), CMD_INIT " %d", &id);
     if (r <= 1 && id >= 0) {
+      offLED();
       setDeviceID(id);
       setRunMode(MODE_INIT);
 
@@ -67,6 +68,24 @@ static int cmdCommon(String &cmd) {
 
     blinkLED();
     sendOK(CMD_BLINK);
+
+    return 0;
+  }
+
+  if (cmd.startsWith(CMD_LED_ON, 0)) {
+    Serial1.printf(CMD_LED_ON "\n");
+
+    onLED();
+    sendOK(CMD_LED_ON);
+
+    return 0;
+  }
+
+  if (cmd.startsWith(CMD_LED_OFF, 0)) {
+    Serial1.printf(CMD_LED_OFF "\n");
+
+    offLED();
+    sendOK(CMD_LED_OFF);
 
     return 0;
   }
@@ -98,6 +117,7 @@ static int cmdControlNode(String &cmd) {
     Serial1.printf(CMD_SINGLE "\n");
 
     if (getRunMode() == MODE_READY || getRunMode() == MODE_SINGLE_RUN) {
+      offLED();
       setRunMode(MODE_SINGLE_WAIT);
 
       sendOK(CMD_SINGLE);
@@ -136,6 +156,7 @@ static int cmdSensorNode(String &cmd) {
 
     r = sscanf(cmd.c_str(), CMD_CNTUP " %d", &sec);
     if (getRunMode() == MODE_READY || getRunMode() == MODE_CNTUP_RUN) {
+      offLED();
       setNumSensors(N_SENSORS);
       setCntupTimeout(sec);
       setRunMode(MODE_CNTUP_WAIT);
@@ -155,6 +176,7 @@ static int cmdSensorNode(String &cmd) {
 
     r = sscanf(cmd.c_str(), CMD_SSHOT " %d", &n);
     if (getRunMode() == MODE_READY || getRunMode() == MODE_SSHOT_RUN) {
+      offLED();
       setNumSensors(n);
       setRunMode(MODE_SSHOT_WAIT);
 
@@ -173,6 +195,7 @@ static int cmdSensorNode(String &cmd) {
 
     r = sscanf(cmd.c_str(), CMD_TATK " %d", &n);
     if (getRunMode() == MODE_READY || getRunMode() == MODE_TATK_RUN) {
+      offLED();
       setNumSensors(n);
       setRunMode(MODE_TATK_WAIT);
 

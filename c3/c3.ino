@@ -55,12 +55,30 @@ unsigned long getPastTime(void) {
 
 int blinkLED(void) {
   if (blink) {
-    neopixelWrite(LED_PIN, 250, 250, 250);
+    neopixelWrite(LED_PIN, 200, 200, 200);
   } else {
     neopixelWrite(LED_PIN, 0, 0, 0);
   }
 
   blink = !blink;
+  delay(10);
+
+  return 0;
+}
+
+int onLED(void) {
+  neopixelWrite(LED_PIN, 250, 250, 250);
+
+  blink = 1;
+  delay(10);
+
+  return 0;
+}
+
+int offLED(void) {
+  neopixelWrite(LED_PIN, 0, 0, 0);
+
+  blink = 0;
   delay(10);
 
   return 0;
