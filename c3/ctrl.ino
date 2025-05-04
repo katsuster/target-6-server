@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "ble.h"
+#include "cmd.h"
 #include "main.h"
 
 static int beep_type = BEEP_TYPE_HIGH;
@@ -47,12 +48,12 @@ static void cnodeReady(void) {
   }
 
   if (b == LOW && before == HIGH) {
-    sprintf(buf, "d:%d button press\n", getDeviceID());
+    sprintf(buf, "d:%d " CMD_BUTTON " press\n", getDeviceID());
     txBLE(buf);
     before = b;
     ignoreEnd = millis();
   } else if (b == HIGH && before == LOW) {
-    sprintf(buf, "d:%d button release\n", getDeviceID());
+    sprintf(buf, "d:%d " CMD_BUTTON " release\n", getDeviceID());
     txBLE(buf);
     before = b;
     ignoreEnd = millis();

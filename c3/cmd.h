@@ -19,6 +19,10 @@
 #define CMD_SSHOT           "sshot"
 #define CMD_TATK            "tatk"
 
+//Result
+#define CMD_BUTTON          "button"
+#define CMD_HIT             "hit"
+
 void onReceive(String &cmd);
 
 #endif /* C3_CMD_H__ */
