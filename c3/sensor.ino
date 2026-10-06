@@ -92,7 +92,9 @@ void txAllTargets(void) {
 
     sprintf(buf, "d:%d " CMD_HIT " s:%d %d:%02d.%03d h:%d\n",
         getDeviceID(), s->id,
-        s->mil_hit / 1000 / 60, (s->mil_hit / 1000) % 60, s->mil_hit % 1000,
+        (int)(s->mil_hit / 1000 / 60),
+        (int)((s->mil_hit / 1000) % 60),
+        (int)(s->mil_hit % 1000),
         s->cnt_hit);
     txBLE(buf);
   }
