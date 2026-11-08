@@ -24,7 +24,7 @@ static int cmdCommon(String &cmd) {
   int id, r;
 
   if (cmd.startsWith(CMD_HELP, 0)) {
-    Serial1.printf(CMD_HELP "\n");
+    //Serial1.printf(CMD_HELP "\n");
 
     txBLE(CMD_HELP        "            : Show this message.\n");
     txBLE(CMD_INIT        " devid      : Set ID and clear timer and counts.\n");
@@ -46,7 +46,7 @@ static int cmdCommon(String &cmd) {
   }
 
   if (cmd.startsWith(CMD_INIT, 0)) {
-    Serial1.printf(CMD_INIT "\n");
+    //Serial1.printf(CMD_INIT "\n");
 
     id = -1;
     r = sscanf(cmd.c_str(), CMD_INIT " %d", &id);
@@ -64,7 +64,7 @@ static int cmdCommon(String &cmd) {
   }
 
   if (cmd.startsWith(CMD_BLINK, 0)) {
-    Serial1.printf(CMD_BLINK "\n");
+    //Serial1.printf(CMD_BLINK "\n");
 
     blinkLED();
     sendOK(CMD_BLINK);
@@ -73,7 +73,7 @@ static int cmdCommon(String &cmd) {
   }
 
   if (cmd.startsWith(CMD_LED_ON, 0)) {
-    Serial1.printf(CMD_LED_ON "\n");
+    //Serial1.printf(CMD_LED_ON "\n");
 
     onLED();
     sendOK(CMD_LED_ON);
@@ -82,7 +82,7 @@ static int cmdCommon(String &cmd) {
   }
 
   if (cmd.startsWith(CMD_LED_OFF, 0)) {
-    Serial1.printf(CMD_LED_OFF "\n");
+    //Serial1.printf(CMD_LED_OFF "\n");
 
     offLED();
     sendOK(CMD_LED_OFF);
@@ -93,7 +93,7 @@ static int cmdCommon(String &cmd) {
   if (cmd.startsWith(CMD_TYPE_BEEP, 0)) {
     int tb = BEEP_TYPE_HIGH, hz = BEEP_HZ_DEFAULT;
 
-    Serial1.printf(CMD_TYPE_BEEP "\n");
+    //Serial1.printf(CMD_TYPE_BEEP "\n");
 
     r = sscanf(cmd.c_str(), CMD_TYPE_BEEP " %d %d", &tb, &hz);
     if (r == 2 && 0 <= tb && tb <= 1 && BEEP_HZ_MIN <= hz && hz <= BEEP_HZ_MAX) {
@@ -114,7 +114,7 @@ static int cmdCommon(String &cmd) {
 
 static int cmdControlNode(String &cmd) {
   if (cmd.startsWith(CMD_SINGLE, 0)) {
-    Serial1.printf(CMD_SINGLE "\n");
+    //Serial1.printf(CMD_SINGLE "\n");
 
     if (getRunMode() == MODE_READY || getRunMode() == MODE_SINGLE_RUN) {
       offLED();
@@ -129,7 +129,7 @@ static int cmdControlNode(String &cmd) {
   }
 
   if (cmd.startsWith(CMD_BEEP, 0)) {
-    Serial1.printf(CMD_BEEP "\n");
+    //Serial1.printf(CMD_BEEP "\n");
 
     if (getDeviceID() >= 0) {
       setRunMode(MODE_BEEP);
@@ -152,7 +152,7 @@ static int cmdSensorNode(String &cmd) {
   if (cmd.startsWith(CMD_CNTUP, 0)) {
     int sec = CNTUP_TIMEOUT_DEFAULT_MS;
 
-    Serial1.printf(CMD_CNTUP "\n");
+    //Serial1.printf(CMD_CNTUP "\n");
 
     r = sscanf(cmd.c_str(), CMD_CNTUP " %d", &sec);
     if (r == 1 && (getRunMode() == MODE_READY || getRunMode() == MODE_CNTUP_RUN)) {
@@ -172,7 +172,7 @@ static int cmdSensorNode(String &cmd) {
   if (cmd.startsWith(CMD_SSHOT, 0)) {
     int n = N_SENSORS;
 
-    Serial1.printf(CMD_SSHOT "\n");
+    //Serial1.printf(CMD_SSHOT "\n");
 
     r = sscanf(cmd.c_str(), CMD_SSHOT " %d", &n);
     if (r == 1 && (getRunMode() == MODE_READY || getRunMode() == MODE_SSHOT_RUN)) {
@@ -191,7 +191,7 @@ static int cmdSensorNode(String &cmd) {
   if (cmd.startsWith(CMD_TATK, 0)) {
     int n = N_SENSORS;
 
-    Serial1.printf(CMD_TATK "\n");
+    //Serial1.printf(CMD_TATK "\n");
 
     r = sscanf(cmd.c_str(), CMD_TATK " %d", &n);
     if (r == 1 && (getRunMode() == MODE_READY || getRunMode() == MODE_TATK_RUN)) {
@@ -214,7 +214,7 @@ static int cmdSensorNode(String &cmd) {
 void onReceive(String &cmd) {
   int r;
 
-  Serial1.printf("onReceive '%s'\n", cmd.c_str());
+  //Serial1.printf("onReceive '%s'\n", cmd.c_str());
 
   r = cmdCommon(cmd);
   if (r == 0) {
@@ -233,6 +233,6 @@ void onReceive(String &cmd) {
     return;
   }
 
-  Serial1.printf("unknown\n");
+  //Serial1.printf("unknown\n");
   sendNG("unknown");
 }

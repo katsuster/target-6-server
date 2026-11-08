@@ -83,7 +83,7 @@ static void cntupHighlightCurrentTarget(struct cntup_game_stat *game) {
 
 static void cntupNextTarget(struct cntup_game_stat *game) {
   if (game->ind_cur_target >= getNumSensors()) {
-    Serial1.printf("Cannot go to next target, already finished.");
+    //Serial1.printf("Cannot go to next target, already finished.");
     return;
   }
 
