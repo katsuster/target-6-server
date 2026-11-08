@@ -9,6 +9,7 @@ static int device_id = -1;
 static int run_mode = MODE_INIT;
 static unsigned long mil_init;
 static int blink = 0;
+static int led_r = 0, led_g = 0, led_b = 0;
 
 void initGPIOs(void) {
   int gpios[] = {
@@ -54,11 +55,34 @@ unsigned long getPastTime(void) {
   return millis() - mil_init;
 }
 
+int updateRgbLED(int r, int g, int b, int set_r, int set_g, int set_b) {
+  int changed = 0;
+
+  if (set_r && led_r != r) {
+    led_r = r;
+    changed = 1;
+  }
+  if (set_g && led_g != g) {
+    led_g = g;
+    changed = 1;
+  }
+  if (set_b && led_b != b) {
+    led_b = b;
+    changed = 1;
+  }
+
+  if (changed) {
+    rgbLedWrite(LED_PIN, led_r, led_g, led_b);
+  }
+
+  return 0;
+}
+
 int blinkLED(void) {
   if (blink) {
-    rgbLedWrite(LED_PIN, 200, 200, 200);
+    updateRgbLED(250, 0, 0, true, false, false);
   } else {
-    rgbLedWrite(LED_PIN, 0, 0, 0);
+    updateRgbLED(0, 0, 0, true, false, false);
   }
 
   blink = !blink;
@@ -68,7 +92,7 @@ int blinkLED(void) {
 }
 
 int onLED(void) {
-  rgbLedWrite(LED_PIN, 250, 250, 250);
+  updateRgbLED(250, 250, 250, true, true, true);
 
   blink = 1;
   delay(10);
@@ -77,7 +101,7 @@ int onLED(void) {
 }
 
 int offLED(void) {
-  rgbLedWrite(LED_PIN, 0, 0, 0);
+  updateRgbLED(0, 0, 0, true, true, true);
 
   blink = 0;
   delay(10);
@@ -96,14 +120,16 @@ void loop(void) {
 }
 
 void setup(void) {
-  Serial1.begin(115200, SERIAL_8N1, GPIO_UART1_RX, GPIO_UART1_TX);
+  //Serial1.begin(115200, SERIAL_8N1, GPIO_UART1_RX, GPIO_UART1_TX);
 
   uint8_t macBT[6];
   esp_read_mac(macBT, ESP_MAC_BT);
-  Serial1.printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", macBT[0], macBT[1], macBT[2], macBT[3], macBT[4], macBT[5]);
+  //Serial1.printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", macBT[0], macBT[1], macBT[2], macBT[3], macBT[4], macBT[5]);
 
   delay(10);
 
   initGPIOs();
   initBLE();
+
+  updateRgbLED(250, 0, 0, true, true, true);
 }

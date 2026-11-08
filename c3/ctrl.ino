@@ -115,6 +115,7 @@ void loopController(void) {
   switch (getRunMode()) {
   case MODE_INIT:
     cnodeInit();
+    updateRgbLED(0, 250, 0, false, true, false);
     break;
   case MODE_READY:
     cnodeReady();

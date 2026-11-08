@@ -138,6 +138,7 @@ void loopSensor() {
   switch (getRunMode()) {
   case MODE_INIT:
     snodeInit();
+    updateRgbLED(0, 0, 250, false, false, true);
     break;
   case MODE_READY:
     snodeReady();
