@@ -4,26 +4,30 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
+#if defined(CONFIG_NIMBLE_ENABLED)
+#include <host/ble_hs.h>
+#endif
 
 #include "ble.h"
 #include "cmd.h"
-
-static BLEServer *pServer = NULL;
-static BLECharacteristic *pTxCharacteristic;
-static bool deviceConnected = false;
-static bool oldDeviceConnected = false;
-
-#define RX_QUEUE_LEN    8
-#define RX_CMD_MAX      128
 
 struct rx_cmd {
   char buf[RX_CMD_MAX];
 };
 
+static BLEServer *pServer = NULL;
+static BLECharacteristic *pTxCharacteristic;
+static bool deviceConnected = false;
+static bool oldDeviceConnected = false;
 static QueueHandle_t rxQueue;
 
-// Bluetooth LE Change Connect State
-class MyServerCallbacks: public BLEServerCallbacks {
+#if defined(CONFIG_NIMBLE_ENABLED)
+// Do not use BLECharacteristic::notify() on NimBLE. NimBLE sometimes reports
+// BLE_GAP_EVENT_CONNECT with non-zero status (0x1a).
+static volatile uint16_t txConnHandle = BLE_HS_CONN_HANDLE_NONE;
+#endif
+
+class ConnectCallbacks: public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) {
     deviceConnected = true;
   };
@@ -33,8 +37,15 @@ class MyServerCallbacks: public BLEServerCallbacks {
   }
 };
 
-// Bluetooth LE Receive
-class MyCallbacks: public BLECharacteristicCallbacks {
+class WriteCallbacks: public BLECharacteristicCallbacks {
+#if defined(CONFIG_NIMBLE_ENABLED)
+  void onWrite(BLECharacteristic *pCharacteristic, ble_gap_conn_desc *desc) {
+    // Answer to the client which sends a command
+    txConnHandle = desc->conn_handle;
+    onWrite(pCharacteristic);
+  }
+#endif
+
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string rxValue = pCharacteristic->getValue().c_str();
     struct rx_cmd c;
@@ -52,6 +63,17 @@ class MyCallbacks: public BLECharacteristicCallbacks {
   }
 };
 
+#if defined(CONFIG_NIMBLE_ENABLED)
+class SubscribeCallbacks: public BLECharacteristicCallbacks {
+  void onSubscribe(BLECharacteristic *pCharacteristic, ble_gap_conn_desc *desc, uint16_t subValue) {
+    // Client enables notification before sending commands
+    if (subValue > 0) {
+      txConnHandle = desc->conn_handle;
+    }
+  }
+};
+#endif
+
 // Bluetooth LE initialize
 void initBLE(void) {
   rxQueue = xQueueCreate(RX_QUEUE_LEN, sizeof(struct rx_cmd));
@@ -61,7 +83,7 @@ void initBLE(void) {
 
   // Create the BLE Server
   pServer = BLEDevice::createServer();
-  pServer->setCallbacks(new MyServerCallbacks());
+  pServer->setCallbacks(new ConnectCallbacks());
 
   // Create the BLE Service
   BLEService *pService = pServer->createService(SERVICE_UUID);
@@ -71,11 +93,14 @@ void initBLE(void) {
         CHARACTERISTIC_UUID_TX,
         BLECharacteristic::PROPERTY_NOTIFY);
   pTxCharacteristic->addDescriptor(new BLE2902());
+#if defined(CONFIG_NIMBLE_ENABLED)
+  pTxCharacteristic->setCallbacks(new SubscribeCallbacks());
+#endif
 
   BLECharacteristic *pRxCharacteristic = pService->createCharacteristic(
         CHARACTERISTIC_UUID_RX,
         BLECharacteristic::PROPERTY_WRITE);
-  pRxCharacteristic->setCallbacks(new MyCallbacks());
+  pRxCharacteristic->setCallbacks(new WriteCallbacks());
 
   // Start the service
   pService->start();
@@ -109,6 +134,18 @@ void loopBLE(void) {
 
 void txBLE(const char *buf) {
   pTxCharacteristic->setValue((uint8_t *)buf, strlen(buf));
+
+#if defined(CONFIG_NIMBLE_ENABLED)
+  uint16_t h = txConnHandle;
+  struct ble_gap_conn_desc desc;
+
+  if (h != BLE_HS_CONN_HANDLE_NONE && ble_gap_conn_find(h, &desc) == 0) {
+    // ble_gatts_notify_custom() consumes om regardless of the result
+    struct os_mbuf *om = ble_hs_mbuf_from_flat(buf, strlen(buf));
+    ble_gatts_notify_custom(h, pTxCharacteristic->getHandle(), om);
+  }
+#else
   pTxCharacteristic->notify();
+#endif
   delay(10);
 }
