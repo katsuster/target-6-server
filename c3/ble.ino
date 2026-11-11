@@ -19,6 +19,7 @@ static BLEServer *pServer = NULL;
 static BLECharacteristic *pTxCharacteristic;
 static bool deviceConnected = false;
 static bool oldDeviceConnected = false;
+static unsigned long disconnectTime = 0;
 static QueueHandle_t rxQueue;
 
 #if defined(CONFIG_NIMBLE_ENABLED)
@@ -92,9 +93,11 @@ void initBLE(void) {
   pTxCharacteristic = pService->createCharacteristic(
         CHARACTERISTIC_UUID_TX,
         BLECharacteristic::PROPERTY_NOTIFY);
-  pTxCharacteristic->addDescriptor(new BLE2902());
 #if defined(CONFIG_NIMBLE_ENABLED)
+  // NimBLE adds the 2902 descriptor automatically
   pTxCharacteristic->setCallbacks(new SubscribeCallbacks());
+#else
+  pTxCharacteristic->addDescriptor(new BLE2902());
 #endif
 
   BLECharacteristic *pRxCharacteristic = pService->createCharacteristic(
@@ -120,14 +123,21 @@ void loopBLE(void) {
 
     // disconnecting
     if (!deviceConnected && oldDeviceConnected) {
-        delay(1000);
+        disconnectTime = millis();
+        oldDeviceConnected = deviceConnected;
+    }
+
+    // restart advertising a while after disconnected, without blocking loop()
+    if (!deviceConnected && disconnectTime != 0 &&
+        millis() - disconnectTime > ADV_RESTART_MS) {
         pServer->startAdvertising();
         //Serial1.println("startAdvertising");
-        oldDeviceConnected = deviceConnected;
+        disconnectTime = 0;
     }
 
     // connecting
     if (deviceConnected && !oldDeviceConnected) {
+        disconnectTime = 0;
         oldDeviceConnected = deviceConnected;
     }
 }
@@ -148,4 +158,8 @@ void txBLE(const char *buf) {
   pTxCharacteristic->notify();
 #endif
   delay(10);
+}
+
+bool isBLEConnected(void) {
+  return deviceConnected;
 }

@@ -9,9 +9,11 @@
 
 #define RX_QUEUE_LEN    8
 #define RX_CMD_MAX      128
+#define ADV_RESTART_MS  1000
 
 void initBLE(void);
 void loopBLE(void);
 void txBLE(const char *buf);
+bool isBLEConnected(void);
 
 #endif /* C3_BLE_H__ */
