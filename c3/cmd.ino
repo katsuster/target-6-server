@@ -4,20 +4,12 @@
 #include "cmd.h"
 #include "main.h"
 
-static void sendMessage(const char *cmd, const char *result) {
+static void sendResult(const char *cmd, bool ok) {
   char buf[128];
 
   memset(buf, 0, sizeof(buf));
-  snprintf(buf, sizeof(buf) - 1, "d:%d %s %s\n", getDeviceID(), cmd, result);
+  snprintf(buf, sizeof(buf) - 1, "d:%d %s %s\n", getDeviceID(), cmd, ok ? "OK" : "NG");
   txBLE(buf);
-}
-
-static void sendOK(const char *cmd) {
-  sendMessage(cmd, "OK");
-}
-
-static void sendNG(const char *cmd) {
-  sendMessage(cmd, "NG");
 }
 
 static int cmdCommon(String &cmd) {
@@ -39,11 +31,7 @@ static int cmdCommon(String &cmd) {
     txBLE(CMD_TATK        "            : Wait for start sensor node (time attack game mode).\n");
     txBLE("\n");
     txBLE("  ver." VERSION "\n");
-
-    return 0;
-  }
-
-  if (cmd.startsWith(CMD_INIT, 0)) {
+  } else if (cmd.startsWith(CMD_INIT, 0)) {
     id = -1;
     r = sscanf(cmd.c_str(), CMD_INIT " %d", &id);
     if (r <= 1 && id >= 0) {
@@ -51,36 +39,20 @@ static int cmdCommon(String &cmd) {
       setDeviceID(id);
       setRunMode(MODE_INIT);
 
-      sendOK(CMD_INIT);
+      sendResult(CMD_INIT, true);
     } else {
-      sendNG(CMD_INIT);
+      sendResult(CMD_INIT, false);
     }
-
-    return 0;
-  }
-
-  if (cmd.startsWith(CMD_BLINK, 0)) {
+  } else if (cmd.startsWith(CMD_BLINK, 0)) {
     blinkLED();
-    sendOK(CMD_BLINK);
-
-    return 0;
-  }
-
-  if (cmd.startsWith(CMD_LED_ON, 0)) {
+    sendResult(CMD_BLINK, true);
+  } else if (cmd.startsWith(CMD_LED_ON, 0)) {
     onLED();
-    sendOK(CMD_LED_ON);
-
-    return 0;
-  }
-
-  if (cmd.startsWith(CMD_LED_OFF, 0)) {
+    sendResult(CMD_LED_ON, true);
+  } else if (cmd.startsWith(CMD_LED_OFF, 0)) {
     offLED();
-    sendOK(CMD_LED_OFF);
-
-    return 0;
-  }
-
-  if (cmd.startsWith(CMD_TYPE_BEEP, 0)) {
+    sendResult(CMD_LED_OFF, true);
+  } else if (cmd.startsWith(CMD_TYPE_BEEP, 0)) {
     int tb = BEEP_TYPE_HIGH, hz = BEEP_HZ_DEFAULT;
 
     r = sscanf(cmd.c_str(), CMD_TYPE_BEEP " %d %d", &tb, &hz);
@@ -88,16 +60,16 @@ static int cmdCommon(String &cmd) {
       setBeepType(tb);
       setBeepHz(hz);
 
-      sendOK(CMD_TYPE_BEEP);
+      sendResult(CMD_TYPE_BEEP, true);
     } else {
-      sendNG(CMD_TYPE_BEEP);
+      sendResult(CMD_TYPE_BEEP, false);
     }
-
-    return 0;
+  } else {
+    //unknwon command
+    return 1;
   }
 
-  //unknown command
-  return 1;
+  return 0;
 }
 
 static int cmdControlNode(String &cmd) {
@@ -106,28 +78,24 @@ static int cmdControlNode(String &cmd) {
       offLED();
       setRunMode(MODE_SINGLE_WAIT);
 
-      sendOK(CMD_SINGLE);
+      sendResult(CMD_SINGLE, true);
     } else {
-      sendNG(CMD_SINGLE);
+      sendResult(CMD_SINGLE, false);
     }
-
-    return 0;
-  }
-
-  if (cmd.startsWith(CMD_BEEP, 0)) {
+  } else if (cmd.startsWith(CMD_BEEP, 0)) {
     if (getDeviceID() >= 0) {
       setRunMode(MODE_BEEP);
 
-      sendOK(CMD_BEEP);
+      sendResult(CMD_BEEP, true);
     } else {
-      sendNG(CMD_BEEP);
+      sendResult(CMD_BEEP, false);
     }
-
-    return 0;
+  } else {
+    //unknown command
+    return 1;
   }
 
-  //unknown command
-  return 1;
+  return 0;
 }
 
 static int cmdSensorNode(String &cmd) {
@@ -143,15 +111,11 @@ static int cmdSensorNode(String &cmd) {
       setCntupTimeout(sec);
       setRunMode(MODE_CNTUP_WAIT);
 
-      sendOK(CMD_CNTUP);
+      sendResult(CMD_CNTUP, true);
     } else {
-      sendNG(CMD_CNTUP);
+      sendResult(CMD_CNTUP, false);
     }
-
-    return 0;
-  }
-
-  if (cmd.startsWith(CMD_SSHOT, 0)) {
+  } else if (cmd.startsWith(CMD_SSHOT, 0)) {
     int n = N_SENSORS;
 
     r = sscanf(cmd.c_str(), CMD_SSHOT " %d", &n);
@@ -160,15 +124,11 @@ static int cmdSensorNode(String &cmd) {
       setNumSensors(n);
       setRunMode(MODE_SSHOT_WAIT);
 
-      sendOK(CMD_SSHOT);
+      sendResult(CMD_SSHOT, true);
     } else {
-      sendNG(CMD_SSHOT);
+      sendResult(CMD_SSHOT, false);
     }
-
-    return 0;
-  }
-
-  if (cmd.startsWith(CMD_TATK, 0)) {
+  } else if (cmd.startsWith(CMD_TATK, 0)) {
     int n = N_SENSORS;
 
     r = sscanf(cmd.c_str(), CMD_TATK " %d", &n);
@@ -177,22 +137,20 @@ static int cmdSensorNode(String &cmd) {
       setNumSensors(n);
       setRunMode(MODE_TATK_WAIT);
 
-      sendOK(CMD_TATK);
+      sendResult(CMD_TATK, true);
     } else {
-      sendNG(CMD_TATK);
+      sendResult(CMD_TATK, false);
     }
-
-    return 0;
+  } else {
+    //unknown command
+    return 1;
   }
 
-  //unknown command
-  return 1;
+  return 0;
 }
 
 void onReceive(String &cmd) {
   int r;
-
-  //Serial1.printf("onReceive '%s'\n", cmd.c_str());
 
   r = cmdCommon(cmd);
   if (r == 0) {
@@ -203,14 +161,8 @@ void onReceive(String &cmd) {
     r = cmdControlNode(cmd);
   } else if (getDeviceID() > 0) {
     r = cmdSensorNode(cmd);
-  } else {
-    //not set
-    r = 1;
   }
-  if (r == 0) {
-    return;
+  if (r != 0) {
+    sendResult("unknown", false);
   }
-
-  //Serial1.printf("unknown\n");
-  sendNG("unknown");
 }
