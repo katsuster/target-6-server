@@ -4,6 +4,8 @@
 #include "cmd.h"
 #include "main.h"
 
+static int device_id = -1;
+
 static void sendResult(const char *cmd, bool ok) {
   char buf[128];
 
@@ -12,25 +14,41 @@ static void sendResult(const char *cmd, bool ok) {
   txBLE(buf);
 }
 
+static void cmdHelp(void) {
+  txBLE(CMD_HELP        "            : Show this message.\n");
+  txBLE(CMD_INIT        " devid      : Set ID and clear timer and counts.\n");
+  txBLE(CMD_BLINK       "            : Blink LED.\n");
+  txBLE(CMD_TYPE_BEEP   " type hz    : Change type and Hz of beep (type:0-1, hz: 100-4000).\n");
+  txBLE("\n");
+  txBLE("For control node.\n");
+  txBLE(CMD_SINGLE      "            : Wait for start control node (single player mode).\n");
+  txBLE(CMD_BEEP        "            : Beep for control node.\n");
+  txBLE("\n");
+  txBLE("For sensor node.\n");
+  txBLE(CMD_CNTUP       "            : Wait for start sensor node (count up game mode).\n");
+  txBLE(CMD_SSHOT       "            : Wait for start sensor node (speed shoot game mode).\n");
+  txBLE(CMD_TATK        "            : Wait for start sensor node (time attack game mode).\n");
+  txBLE("\n");
+  txBLE("  ver." VERSION "\n");
+}
+
+void initCmd(void) {
+  device_id = -1;
+}
+
+int getDeviceID(void) {
+  return device_id;
+}
+
+void setDeviceID(int id) {
+  device_id = id;
+}
+
 static int cmdCommon(String &cmd) {
   int id, r;
 
   if (cmd.startsWith(CMD_HELP, 0)) {
-    txBLE(CMD_HELP        "            : Show this message.\n");
-    txBLE(CMD_INIT        " devid      : Set ID and clear timer and counts.\n");
-    txBLE(CMD_BLINK       "            : Blink LED.\n");
-    txBLE(CMD_TYPE_BEEP   " type hz    : Change type and Hz of beep (type:0-1, hz: 100-4000).\n");
-    txBLE("\n");
-    txBLE("For control node.\n");
-    txBLE(CMD_SINGLE      "            : Wait for start control node (single player mode).\n");
-    txBLE(CMD_BEEP        "            : Beep for control node.\n");
-    txBLE("\n");
-    txBLE("For sensor node.\n");
-    txBLE(CMD_CNTUP       "            : Wait for start sensor node (count up game mode).\n");
-    txBLE(CMD_SSHOT       "            : Wait for start sensor node (speed shoot game mode).\n");
-    txBLE(CMD_TATK        "            : Wait for start sensor node (time attack game mode).\n");
-    txBLE("\n");
-    txBLE("  ver." VERSION "\n");
+    cmdHelp();
   } else if (cmd.startsWith(CMD_INIT, 0)) {
     id = -1;
     r = sscanf(cmd.c_str(), CMD_INIT " %d", &id);
@@ -149,18 +167,18 @@ static int cmdSensorNode(String &cmd) {
   return 0;
 }
 
-void onReceive(String &cmd) {
+void onReceive(String &str) {
   int r;
 
-  r = cmdCommon(cmd);
+  r = cmdCommon(str);
   if (r == 0) {
     return;
   }
 
   if (getDeviceID() == 0) {
-    r = cmdControlNode(cmd);
+    r = cmdControlNode(str);
   } else if (getDeviceID() > 0) {
-    r = cmdSensorNode(cmd);
+    r = cmdSensorNode(str);
   }
   if (r != 0) {
     sendResult("unknown", false);

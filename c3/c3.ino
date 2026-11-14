@@ -5,7 +5,6 @@
 #include "ble.h"
 #include "main.h"
 
-static int device_id = -1;
 static int run_mode = MODE_INIT;
 static unsigned long mil_init;
 static int blink = 0;
@@ -25,14 +24,6 @@ void initGPIOs(void) {
     pinMode(gpios[i], OUTPUT);
     digitalWrite(gpios[i], LOW);
   }
-}
-
-int getDeviceID(void) {
-  return device_id;
-}
-
-void setDeviceID(int id) {
-  device_id = id;
 }
 
 int getRunMode(void) {
@@ -109,6 +100,20 @@ int offLED(void) {
   return 0;
 }
 
+void setup(void) {
+  //Serial1.begin(115200, SERIAL_8N1, GPIO_UART1_RX, GPIO_UART1_TX);
+
+  uint8_t macBT[6];
+  esp_read_mac(macBT, ESP_MAC_BT);
+  //Serial1.printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", macBT[0], macBT[1], macBT[2], macBT[3], macBT[4], macBT[5]);
+
+  initCmd();
+  initGPIOs();
+  initBLE();
+
+  updateRgbLED(250, 0, 0, true, true, true);
+}
+
 void loop(void) {
   if (getDeviceID() == 0) {
     loopController();
@@ -117,19 +122,4 @@ void loop(void) {
   }
 
   loopBLE();
-}
-
-void setup(void) {
-  //Serial1.begin(115200, SERIAL_8N1, GPIO_UART1_RX, GPIO_UART1_TX);
-
-  uint8_t macBT[6];
-  esp_read_mac(macBT, ESP_MAC_BT);
-  //Serial1.printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", macBT[0], macBT[1], macBT[2], macBT[3], macBT[4], macBT[5]);
-
-  delay(10);
-
-  initGPIOs();
-  initBLE();
-
-  updateRgbLED(250, 0, 0, true, true, true);
 }

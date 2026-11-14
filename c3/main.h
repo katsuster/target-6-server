@@ -74,8 +74,6 @@ struct sensor {
 };
 
 void initGPIOs(void);
-int getDeviceID(void);
-void setDeviceID(int id);
 int getRunMode(void);
 void setRunMode(int m);
 unsigned long getInitTime(void);

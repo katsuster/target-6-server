@@ -23,6 +23,9 @@
 #define CMD_BUTTON          "button"
 #define CMD_HIT             "hit"
 
-void onReceive(String &cmd);
+void initCmd(void);
+int getDeviceID(void);
+void setDeviceID(int id);
+void onReceive(String &str);
 
 #endif /* C3_CMD_H__ */
